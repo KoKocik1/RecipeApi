@@ -3,7 +3,7 @@ on:
   push:
     branches: [ dev ]
   pull_request:
-    branches: [ not-main ]
+    branches: [ main, dev ]
   workflow_dispatch:
 
 jobs:
