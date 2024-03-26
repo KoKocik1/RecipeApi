@@ -1,4 +1,20 @@
 ﻿<Properties StartupConfiguration="{E44A4EB9-0C92-40AD-8C93-DBBD03062247}|https">
-  <MonoDevelop.Ide.ItemProperties.RecipeApi FirstBuild="True" />
+  <MonoDevelop.Ide.ItemProperties.RecipeApi FirstBuild="True" PreferredExecutionTarget="/System/Volumes/Preboot/Cryptexes/App/System/Applications/Safari.app" />
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
+  <MonoDevelop.Ide.Workbench>
+    <Pads>
+      <Pad Id="ProjectPad">
+        <State name="__root__">
+          <Node name="RecipeApi" expanded="True" selected="True">
+            <Node name="RecipeApi" expanded="True" />
+          </Node>
+        </State>
+      </Pad>
+    </Pads>
+  </MonoDevelop.Ide.Workbench>
+  <MonoDevelop.Ide.DebuggingService.Breakpoints>
+    <BreakpointStore />
+  </MonoDevelop.Ide.DebuggingService.Breakpoints>
   <MultiItemStartupConfigurations />
+  <MonoDevelop.Ide.DebuggingService.PinnedWatches />
 </Properties>
