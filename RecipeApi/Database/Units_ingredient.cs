@@ -5,12 +5,9 @@ using System.Threading.Tasks;
 
 namespace RecipeApi.Database
 {
-    public class Ingredient
+    public class Units_ingredient
     {
         public int Id { get; set; }
-
-        public string Name { get; set; }
-
-        public bool Verified { get; set; }
+        public string Type { get; set; }
     }
 }

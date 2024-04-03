@@ -14,15 +14,15 @@ namespace RecipeApi.Database
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Recipe>()
-                .Property(r => r.Name)
-                .IsRequired();
-
-            modelBuilder.Entity<Recipe>()
-                .Property(r => r.Description)
+                .Property(r => r.Title)
                 .IsRequired();
 
             modelBuilder.Entity<Recipe>()
                 .Property(r => r.Instructions)
+                .IsRequired();
+
+            modelBuilder.Entity<Recipe>()
+                .Property(r => r.Ingredients)
                 .IsRequired();
             //TODO
         }
