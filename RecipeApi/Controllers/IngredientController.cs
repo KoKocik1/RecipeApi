@@ -44,7 +44,7 @@ namespace RecipeApi.Controllers
         public ActionResult AddIngredient([FromBody] CreateIngredientDto ingredient)
         {
             var id=_ingredientService.AddIngredient(ingredient);
-            return Created($"ingredient/{id}",null);
+            return Created($"/ingredient/{id}",null);
         }
 
         [HttpPut("{id}")]

@@ -26,6 +26,8 @@ namespace RecipeApi.Service
 
         public int AddIngredient(CreateIngredientDto ingredientDto)
         {
+            if(_dbContext.Ingredients.FirstOrDefault(r=>r.Name==ingredientDto.Name) is not null) throw new BadRequestException("Ingredient already exists");
+            
             var ingredient = _mapper.Map<Ingredient>(ingredientDto);
             _dbContext.Ingredients.Add(ingredient);
             _dbContext.SaveChanges();
