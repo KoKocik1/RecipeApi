@@ -12,54 +12,54 @@ using RecipeApi.Service;
 
 namespace RecipeApi.Controllers
 {
-    [Route("[controller]")]
+    [Route("api/ingredient")]
     [ApiController]
     public class IngredientController : ControllerBase
     {
-        private readonly IRecipeService _recipeService;
+        private readonly IIngrededientService _ingredientService;
 
-        public IngredientController(IRecipeService recipeService)
+        public IngredientController(IIngrededientService ingrededientService)
         {
-            _recipeService = recipeService;
+            _ingredientService = ingrededientService;
         }
 
         [HttpGet]
-        [AllowAnonymous]
+        // [AllowAnonymous]
         public ActionResult<IEnumerable<IngredientDto>> GetIngredients()
         {
-            var ingredients = _recipeService.GetIngredients();
+            var ingredients = _ingredientService.GetIngredients();
             return Ok(ingredients);
         }
 
         [HttpGet("{id}")]
-        [AllowAnonymous]
+        //  [AllowAnonymous]
         public ActionResult<IngredientDto> GetIngredient(int id)
         {
-            var ingredient = _recipeService.GetIngredient(id);
+            var ingredient = _ingredientService.GetIngredient(id);
             return Ok(ingredient);
         }
 
         [HttpPost]
-        [Authorize]
-        public ActionResult AddIngredient([FromBody] IngredientDto ingredient)
+        // [Authorize]
+        public ActionResult AddIngredient([FromBody] CreateIngredientDto ingredient)
         {
-            var id=_recipeService.AddIngredient(ingredient);
+            var id=_ingredientService.AddIngredient(ingredient);
             return Created($"ingredient/{id}",null);
         }
 
         [HttpPut("{id}")]
-        [Authorize]
+        // [Authorize]
         public ActionResult UpdateIngredient(int id, [FromBody] IngredientDto ingredient)
         {
-            _recipeService.UpdateIngredient(id, ingredient);
+            _ingredientService.UpdateIngredient(id, ingredient);
             return Ok();
         }
 
         [HttpDelete("{id}")]
-        [Authorize]
+        // [Authorize]
         public ActionResult DeleteIngredient(int id)
         {
-            _recipeService.DeleteIngredient(id);
+            _ingredientService.DeleteIngredient(id);
             return NoContent();
         }
     }

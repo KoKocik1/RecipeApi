@@ -6,13 +6,13 @@ using RecipeApi.Models;
 
 namespace RecipeApi.IService
 {
-    public interface IRecipeService
+    public interface IIngrededientService
     {
         IngredientDto GetIngredient(int id);
         IEnumerable<IngredientDto> GetIngredients();
-        int AddIngredient(IngredientDto ingredient);
+        int AddIngredient(CreateIngredientDto ingredient);
         void UpdateIngredient(int id, IngredientDto ingredient);
         void DeleteIngredient(int id);
-        
+
     }
 }

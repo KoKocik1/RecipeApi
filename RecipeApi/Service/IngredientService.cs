@@ -5,12 +5,13 @@ using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using RecipeApi.Database;
+using RecipeApi.Exceptions;
 using RecipeApi.IService;
 using RecipeApi.Models;
 
 namespace RecipeApi.Service
 {
-    public class IngredientService : IRecipeService
+    public class IngredientService : IIngrededientService
     {
         private readonly RecipeDbContext _dbContext;
         private readonly IMapper _mapper;
@@ -23,7 +24,7 @@ namespace RecipeApi.Service
             _logger = logger;
         }
 
-        public int AddIngredient(IngredientDto ingredientDto)
+        public int AddIngredient(CreateIngredientDto ingredientDto)
         {
             var ingredient = _mapper.Map<Ingredient>(ingredientDto);
             _dbContext.Ingredients.Add(ingredient);
@@ -38,7 +39,7 @@ namespace RecipeApi.Service
 
             var ingredient = _dbContext.Ingredients.FirstOrDefault(i => i.Id == id);
 
-            if (ingredient is null) throw new DllNotFoundException("Ingredient not found");
+            if (ingredient is null) throw new NotFoundException("Ingredient not found");
 
             _dbContext.Ingredients.Remove(ingredient);
             _dbContext.SaveChanges();
@@ -48,7 +49,7 @@ namespace RecipeApi.Service
         {
             var ingredient = _dbContext.Ingredients.FirstOrDefault(i => i.Id == id);
 
-            if (ingredient is null) throw new DllNotFoundException("Ingredient not found");
+            if (ingredient is null) throw new NotFoundException("Ingredient not found");
 
             return _mapper.Map<IngredientDto>(ingredient);
         }
@@ -56,13 +57,20 @@ namespace RecipeApi.Service
         public IEnumerable<IngredientDto> GetIngredients()
         {
             var ingredients = _dbContext.Ingredients.ToList();
-            
+
             return _mapper.Map<IEnumerable<IngredientDto>>(ingredients);
         }
 
         public void UpdateIngredient(int id, IngredientDto ingredient)
         {
-            throw new NotImplementedException();
+            var ingredientToUpdate = _dbContext.Ingredients.FirstOrDefault(i => i.Id == id);
+
+            if (ingredientToUpdate is null) throw new NotFoundException("Ingredient not found");
+
+            ingredientToUpdate.Name = ingredient.Name;
+            ingredientToUpdate.Verified = ingredient.Verified;
+
+            _dbContext.SaveChanges();
         }
     }
 }

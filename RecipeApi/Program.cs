@@ -1,6 +1,11 @@
 ﻿using RecipeApi.Database;
 using Microsoft.EntityFrameworkCore;
 using NLog.Web;
+using System.Reflection;
+using RecipeApi.Seeder;
+using RecipeApi.IService;
+using RecipeApi.Service;
+using RecipeApi.Middleware;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -19,9 +24,13 @@ builder.Services.AddDbContext<RecipeDbContext>(options =>
 builder.Services.AddAutoMapper(Assembly.GetExecutingAssembly());
 
 builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 
 builder.Services.AddScoped<ErrorHandlingMiddleware>();
+
+// Seeder
+builder.Services.AddScoped<RecipeSeeder>();
+
+builder.Services.AddScoped<IIngrededientService, IngredientService>();
 
 builder.Services.AddHttpContextAccessor();
 
@@ -41,15 +50,15 @@ builder.Services.AddCors(options =>
 
 var app = builder.Build();
 
-// var scope = app.Services.CreateScope();
-//var seeder = scope.ServiceProvider.GetRequiredService<RestaurantSeeder>();
+var scope = app.Services.CreateScope();
+var seeder = scope.ServiceProvider.GetRequiredService<RecipeSeeder>();
 
 
 app.UseResponseCaching();
 app.UseStaticFiles();
 app.UseCors("FrontEndClient");
 
-//seeder.Seed();
+seeder.Seed();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using RecipeApi.Database;
@@ -11,9 +12,11 @@ using RecipeApi.Database;
 namespace RecipeApi.Migrations
 {
     [DbContext(typeof(RecipeDbContext))]
-    partial class RecipeDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240403101522_IngredientsAndRecipes")]
+    partial class IngredientsAndRecipes
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -91,11 +94,7 @@ namespace RecipeApi.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("IngredientId");
-
                     b.HasIndex("RecipeId");
-
-                    b.HasIndex("Units_ingredientId");
 
                     b.ToTable("Recipe_Ingredients");
                 });
@@ -144,27 +143,11 @@ namespace RecipeApi.Migrations
 
             modelBuilder.Entity("RecipeApi.Database.Recipe_Ingredient", b =>
                 {
-                    b.HasOne("RecipeApi.Database.Ingredient", "Ingredient")
-                        .WithMany()
-                        .HasForeignKey("IngredientId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("RecipeApi.Database.Recipe", null)
                         .WithMany("RecipeIngredients")
                         .HasForeignKey("RecipeId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.HasOne("RecipeApi.Database.Units_ingredient", "Unit")
-                        .WithMany()
-                        .HasForeignKey("Units_ingredientId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Ingredient");
-
-                    b.Navigation("Unit");
                 });
 
             modelBuilder.Entity("RecipeApi.Database.Recipe_Instruction", b =>

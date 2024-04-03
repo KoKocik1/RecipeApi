@@ -5,12 +5,8 @@ using System.Threading.Tasks;
 
 namespace RecipeApi.Models
 {
-    public class IngredientDto
+    public class CreateIngredientDto
     {
-        public int Id { get; set; }
-
         public string Name { get; set; }
-
-        public bool Verified { get; set; }
     }
 }
