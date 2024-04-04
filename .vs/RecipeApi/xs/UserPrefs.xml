@@ -1,15 +1,27 @@
 ﻿<Properties StartupConfiguration="{E44A4EB9-0C92-40AD-8C93-DBBD03062247}|https">
-  <MonoDevelop.Ide.ItemProperties.RecipeApi FirstBuild="True" PreferredExecutionTarget="/System/Volumes/Preboot/Cryptexes/App/System/Applications/Safari.app" />
+  <MonoDevelop.Ide.ItemProperties.RecipeApi PreferredExecutionTarget="/System/Volumes/Preboot/Cryptexes/App/System/Applications/Safari.app" />
   <MultiItemStartupConfigurations />
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
   <MonoDevelop.Ide.DebuggingService.PinnedWatches />
-  <MonoDevelop.Ide.DebuggingService.Breakpoints />
-  <MonoDevelop.Ide.Workbench>
+  <MonoDevelop.Ide.DebuggingService.Breakpoints>
+    <BreakpointStore />
+  </MonoDevelop.Ide.DebuggingService.Breakpoints>
+  <MonoDevelop.Ide.Workbench ActiveDocument="RecipeApi/Service/IngredientService.cs">
+    <Files>
+      <File FileName="RecipeApi.Tests/TestDbContextBase.cs" />
+      <File FileName="RecipeApi/Database/RecipeDbContext.cs" Line="13" Column="33" />
+      <File FileName="RecipeApi/Service/IngredientService.cs" Line="30" Column="52" />
+    </Files>
     <Pads>
       <Pad Id="ProjectPad">
         <State name="__root__">
-          <Node name="RecipeApi" expanded="True" selected="True">
-            <Node name="RecipeApi" expanded="True" />
+          <Node name="RecipeApi" expanded="True">
+            <Node name="RecipeApi">
+              <Node name="Database" expanded="True" />
+              <Node name="Service" expanded="True">
+                <Node name="IngredientService.cs" selected="True" />
+              </Node>
+            </Node>
           </Node>
         </State>
       </Pad>

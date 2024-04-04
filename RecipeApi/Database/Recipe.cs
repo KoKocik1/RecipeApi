@@ -1,11 +1,21 @@
 using System.ComponentModel.DataAnnotations.Schema;
+using RecipeApi.Database;
 
-public class Recipe
+namespace RecipeApi.Database
 {
-    public int Id { get; set; }
-    public string Name { get; set; }
-    public string Description { get; set; }
-    public List<Ingredient> Ingredients { get; set; }
-    public string Instructions { get; set; }
-    
+    public class Recipe
+    {
+        public int Id { get; set; }
+        public string Title { get; set; }
+        public string Description { get; set; }
+        public string TimeToCook { get; set; }
+        public virtual List<Recipe_Instruction> Instructions { get; set; }
+        public virtual List<Recipe_Ingredient> Ingredients { get; set; }
+        public int Portions { get; set; }
+
+        public DateTime CreatedAt { get; set; }
+        public DateTime UpdatedAt { get; set; }
+
+
+    }
 }

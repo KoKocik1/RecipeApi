@@ -13,9 +13,9 @@ namespace RecipeApi.Tests.DatabaseTest
         [Fact]
         public void DbContext_CanCreateInstance()
         {
-            // Baza danych w pamięci bez koniecznosci łączenia się z rzeczywistą bazą danych
+            // Database in memory without connect to real database
             var options = new DbContextOptionsBuilder<RecipeDbContext>()
-                .UseInMemoryDatabase(databaseName: "TestDatabase")
+                .UseInMemoryDatabase(databaseName: "DbContext_CanCreateInstance")
                 .Options;
 
             // act
