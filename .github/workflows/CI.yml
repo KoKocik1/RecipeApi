@@ -1,9 +1,10 @@
 name: CI
 on:
   push:
-    branches: [ dev ]
+    branches:
+      - '*'
   pull_request:
-    branches: [ not-main ]
+    branches: [ main, dev ]
   workflow_dispatch:
 
 jobs:
