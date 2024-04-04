@@ -14,7 +14,7 @@ namespace RecipeApi.Tests
         {
             // Arrange
             var options = new DbContextOptionsBuilder<RecipeDbContext>()
-                .UseInMemoryDatabase(databaseName: "TestDatabase")
+                .UseInMemoryDatabase(databaseName: "DbContext_CanAddAndRetrieveRecipes")
                 .Options;
 
             // Act
@@ -41,7 +41,7 @@ namespace RecipeApi.Tests
         {
             // Arrange
             var options = new DbContextOptionsBuilder<RecipeDbContext>()
-                .UseInMemoryDatabase(databaseName: "TestDatabase")
+                .UseInMemoryDatabase(databaseName: "DbContext_CanAddAndRetrieveRecipesWithIngredients")
                 .Options;
 
             // Act
