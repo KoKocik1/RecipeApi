@@ -77,9 +77,8 @@ namespace RecipeApi.Service
             var claims = new List<Claim>()
             {
                 new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
-                new Claim(ClaimTypes.Name, $"{user.FirstName} {user.LastName}"),
+                new Claim(ClaimTypes.Name, $"{user.UserName}"),
                 new Claim(ClaimTypes.Role, $"{user.Role.Name}"),
-                new Claim(ClaimTypes.GivenName, user.UserName),
                 new Claim("DateOfBirth", user.DateOfBirth.Value.ToString("yyyy-MM-dd")),
             };
 

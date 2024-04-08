@@ -10,6 +10,9 @@ using RecipeApi.Authentication;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using Microsoft.AspNetCore.Identity;
+using FluentValidation;
+using RecipeApi.Models;
+using RecipeApi.Validators;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -43,7 +46,7 @@ builder.Services.AddAuthentication(option =>
 // {
 //     option.AddPolicy("HasNationality", builder => builder.RequireClaim("Nationality", "German", "Polish"));
 //     option.AddPolicy("atleast20", builder => builder.AddRequirements(new MinimumAgeRequirement(20)));
-//     option.AddPolicy("CreatedAtkeast2Restaurants", builder => builder.AddRequirements(new MinimumTwoRestaurant(2)));
+//     option.AddPolicy("CreatedAtLeast1Recipe", builder => builder.AddRequirements(new MinimumOneRestaurant(1)));
 // });
 
 //Authorization
@@ -71,6 +74,7 @@ builder.Services.AddScoped<RecipeSeeder>();
 builder.Services.AddScoped<IIngrededientService, IngredientService>();
 builder.Services.AddScoped<IAccountService, AccountService>();
 builder.Services.AddScoped<IPasswordHasher<User>, PasswordHasher<User>>();
+builder.Services.AddScoped<IValidator<RegisterUserDto>, RegisterUserDtoValidator>();
 
 builder.Services.AddHttpContextAccessor();
 
