@@ -16,14 +16,23 @@ namespace RecipeApi.Seeder
             _dbContext = context;
         }
 
-        public void Seed(){
-            if(_dbContext.Database.CanConnect()){
+        public void Seed()
+        {
+            if (_dbContext.Database.CanConnect())
+            {
                 var pendingMigration = _dbContext.Database.GetPendingMigrations();
-                if(pendingMigration!=null && pendingMigration.Any()) {
+                if (pendingMigration != null && pendingMigration.Any())
+                {
                     _dbContext.Database.Migrate();
                 }
 
 
+                if (!_dbContext.Roles.Any())
+                {
+                    var roles = getRoles();
+                    _dbContext.Roles.AddRange(roles);
+                    _dbContext.SaveChanges();
+                }
                 if (!_dbContext.Ingredients.Any())
                 {
                     var ingredients = getIngredients();
@@ -31,6 +40,22 @@ namespace RecipeApi.Seeder
                     _dbContext.SaveChanges();
                 }
             }
+        }
+        private IEnumerable<Role> getRoles()
+        {
+            var roles = new List<Role>()
+            {
+                new Role(){
+                    Name="User"
+                },
+                new Role(){
+                    Name="Manager"
+                },
+                new Role(){
+                    Name="Admin"
+                }
+            };
+            return roles;
         }
         private IEnumerable<Ingredient> getIngredients()
         {
