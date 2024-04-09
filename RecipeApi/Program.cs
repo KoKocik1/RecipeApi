@@ -78,6 +78,8 @@ builder.Services.AddScoped<RecipeSeeder>();
 builder.Services.AddScoped<IIngrededientService, IngredientService>();
 builder.Services.AddScoped<IAccountService, AccountService>();
 builder.Services.AddScoped<IRecipeInstructionService, RecipeInstructionService>();
+builder.Services.AddScoped<IRecipeIngredientService, RecipeIngredientService>();
+
 builder.Services.AddScoped<IPasswordHasher<User>, PasswordHasher<User>>();
 builder.Services.AddScoped<IValidator<RegisterUserDto>, RegisterUserDtoValidator>();
 

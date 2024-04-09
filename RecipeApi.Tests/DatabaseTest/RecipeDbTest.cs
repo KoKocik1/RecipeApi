@@ -70,8 +70,8 @@ namespace RecipeApi.Tests
                 context.Recipes.Add(recipe);
                 context.SaveChanges();
 
-                var recipeIngredient1 = new RecipeIngredient { Ingredient = ingredient1, Quantity = 1, IngredientId = ingredient1.Id, RecipeId = recipe.Id, Unit = unit1, Units_ingredientId = unit1.Id};
-                var recipeIngredient2 = new RecipeIngredient { Ingredient = ingredient2, Quantity = 2, IngredientId = ingredient2.Id, RecipeId = recipe.Id, Unit = unit2, Units_ingredientId = unit2.Id};
+                var recipeIngredient1 = new RecipeIngredient { Ingredient = ingredient1, Quantity = 1, IngredientId = ingredient1.Id, RecipeId = recipe.Id, Unit = unit1, Unit_ingredientId = unit1.Id};
+                var recipeIngredient2 = new RecipeIngredient { Ingredient = ingredient2, Quantity = 2, IngredientId = ingredient2.Id, RecipeId = recipe.Id, Unit = unit2, Unit_ingredientId = unit2.Id};
                 context.Recipe_Ingredients.AddRange(recipeIngredient1, recipeIngredient2);
                 context.SaveChanges();
 
