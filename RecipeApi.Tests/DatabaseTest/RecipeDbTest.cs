@@ -55,28 +55,28 @@ namespace RecipeApi.Tests
                 context.SaveChanges();
 
                 //Create Unit
-                var unit1 = new Units_ingredient { Type = "Test Unit 1"};
-                var unit2 = new Units_ingredient { Type = "Test Unit 2"};
+                var unit1 = new UnitsIngredient { Type = "Test Unit 1"};
+                var unit2 = new UnitsIngredient { Type = "Test Unit 2"};
                 context.Units_ingredients.AddRange(unit1, unit2);
                 context.SaveChanges();
 
                 // Create instructions
-                var instruction1 = new Recipe_Instruction { Instruction = "Test Step 1", Order = 1, RecipeId = 1};
-                var instruction2 = new Recipe_Instruction { Instruction = "Test Step 2", Order = 2, RecipeId = 1};
+                var instruction1 = new RecipeInstruction { Instruction = "Test Step 1", Order = 1, RecipeId = 1};
+                var instruction2 = new RecipeInstruction { Instruction = "Test Step 2", Order = 2, RecipeId = 1};
                 context.Recipe_Instructions.AddRange(instruction1, instruction2);
 
                 // Add a new recipe
-                var recipe = new Recipe { Title = "Test Recipe", Description = "Test Description", Instructions = new List<Recipe_Instruction> { instruction1, instruction2 }, Portions = 4, TimeToCook = "30 min", CreatedAt=DateTime.Now, UpdatedAt=DateTime.Now};
+                var recipe = new Recipe { Title = "Test Recipe", Description = "Test Description", Instructions = new List<RecipeInstruction> { instruction1, instruction2 }, Portions = 4, TimeToCook = "30 min", CreatedAt=DateTime.Now, UpdatedAt=DateTime.Now};
                 context.Recipes.Add(recipe);
                 context.SaveChanges();
 
-                var recipeIngredient1 = new Recipe_Ingredient { Ingredient = ingredient1, Quantity = 1, IngredientId = ingredient1.Id, RecipeId = recipe.Id, Unit = unit1, Units_ingredientId = unit1.Id};
-                var recipeIngredient2 = new Recipe_Ingredient { Ingredient = ingredient2, Quantity = 2, IngredientId = ingredient2.Id, RecipeId = recipe.Id, Unit = unit2, Units_ingredientId = unit2.Id};
+                var recipeIngredient1 = new RecipeIngredient { Ingredient = ingredient1, Quantity = 1, IngredientId = ingredient1.Id, RecipeId = recipe.Id, Unit = unit1, Units_ingredientId = unit1.Id};
+                var recipeIngredient2 = new RecipeIngredient { Ingredient = ingredient2, Quantity = 2, IngredientId = ingredient2.Id, RecipeId = recipe.Id, Unit = unit2, Units_ingredientId = unit2.Id};
                 context.Recipe_Ingredients.AddRange(recipeIngredient1, recipeIngredient2);
                 context.SaveChanges();
 
                 // connect ingredients with recipe
-                recipe.Ingredients = new List<Recipe_Ingredient> { recipeIngredient1, recipeIngredient2 };
+                recipe.Ingredients = new List<RecipeIngredient> { recipeIngredient1, recipeIngredient2 };
                 context.Recipes.Update(recipe);
                 context.SaveChanges();                
             }
