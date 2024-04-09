@@ -13,6 +13,8 @@ namespace RecipeApi.Database
         public DbSet<Recipe_Ingredient> Recipe_Ingredients { get; set; }
         public DbSet<Recipe_Instruction> Recipe_Instructions { get; set; }
         public DbSet<Units_ingredient> Units_ingredients { get; set; }
+        public DbSet<Role> Roles { get; set; }
+        public DbSet<User> Users { get; set; }
 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

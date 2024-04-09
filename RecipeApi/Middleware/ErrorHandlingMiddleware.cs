@@ -22,13 +22,14 @@ namespace RecipeApi.Middleware
             }
             catch(NotFoundException notFoundException){
                 context.Response.StatusCode = 404;
-                context.Response.WriteAsync(notFoundException.Message);
+                await context.Response.WriteAsync(notFoundException.Message);
             }
-            catch(Exception ex){
-                _logger.LogError(ex, ex.Message);
+            catch (Exception e)
+            {
+                _logger.LogError(e, e.Message);
 
                 context.Response.StatusCode = 500;
-                context.Response.WriteAsync("Something went wrong");
+                await context.Response.WriteAsync("Something went wrong");
             }
         }
     }
