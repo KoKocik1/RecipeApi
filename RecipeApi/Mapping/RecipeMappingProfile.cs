@@ -13,6 +13,8 @@ namespace RecipeApi.Mapping
         public RecipeMappingProfile(){
             CreateMap<Ingredient, IngredientDto>();
             CreateMap<CreateIngredientDto, Ingredient>();
+            CreateMap<CreateRecipeInstructionDto, RecipeInstruction>();
+            CreateMap<RecipeInstruction, RecipeInstructionDto>();
         }
     }
 }

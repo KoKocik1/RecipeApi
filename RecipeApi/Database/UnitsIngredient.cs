@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace RecipeApi.Database
 {
-    public class Units_ingredient
+    public class UnitsIngredient
     {
         public int Id { get; set; }
         public string Type { get; set; }
