@@ -26,7 +26,7 @@ namespace RecipeApi.Validators
 
             RuleFor(x=>x.UserName)
                 .NotEmpty().WithMessage("Username is required")
-                .MinimumLength(5).WithMessage("Username must be at least 5 characters")
+                .MinimumLength(3).WithMessage("Username must be at least 3 characters")
                 .MaximumLength(20).WithMessage("Username must be at most 20 characters")
                 .Matches("^[a-zA-Z0-9]*$").WithMessage("Username must contain only letters and numbers")
                 .Custom((value, context) =>
