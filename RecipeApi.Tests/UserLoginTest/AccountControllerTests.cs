@@ -49,16 +49,11 @@ namespace RecipeApi.Tests.UserLoginTest
 
         public void Dispose()
         {
-            // using (var context = new RecipeDbContext(_options))
-            // {
-            //     context.Users.RemoveRange(context.Users);
-            //     context.SaveChanges();
-            //     Console.WriteLine("Database deleted");
-            // }
+
         }
 
         [Fact]
-        public void CreateAccount_correctPassword()
+        public void CreateAccount_correctLogIn()
         {
             using (var context = new RecipeDbContext(_options))
             {
@@ -261,7 +256,7 @@ namespace RecipeApi.Tests.UserLoginTest
             }
         }
         [Fact]
-        public void CreateAccount_ExistingPassword()
+        public void CreateAccount_ExistingEmail()
         {
             using (var context = new RecipeDbContext(_options))
             {
@@ -285,10 +280,43 @@ namespace RecipeApi.Tests.UserLoginTest
                 Assert.NotNull(addResult);
                 Assert.IsType<OkResult>(addResult);
 
+                userDto.UserName = "Test2";
                 var result = _validator.Validate(userDto);
                 // Assert
                 Assert.False(result.IsValid);
                 Assert.Equal("That email is taken", result.Errors.First().ErrorMessage);
+            }
+        }
+         [Fact]
+        public void CreateAccount_ExistingUsername()
+        {
+            using (var context = new RecipeDbContext(_options))
+            {
+                // Arrange
+                var service = new AccountService(context, _mapper, _logger, _passwordHasher, _authenticationSettings);
+                var controller = new AccountController(service, _loggerController);
+
+                var userDto = new RegisterUserDto
+                {
+                    FirstName = "Test",
+                    LastName = "Test",
+                    UserName = "Test",
+                    Email = "test@test.test",
+                    DateOfBirth = DateTime.Now,
+                    Nationality = "Test",
+                    Password = "Test123!",
+                    ConfirmedPassword = "Test123!"
+                };
+                var _validator = new RegisterUserDtoValidator(context);
+                var addResult=controller.RegisterAccount(userDto);
+                Assert.NotNull(addResult);
+                Assert.IsType<OkResult>(addResult);
+
+                userDto.Email = "test2@test.test";
+                var result = _validator.Validate(userDto);
+                // Assert
+                Assert.False(result.IsValid);
+                Assert.Equal("That username is taken", result.Errors.First().ErrorMessage);
             }
         }
     }
