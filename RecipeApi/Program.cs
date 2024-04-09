@@ -13,6 +13,7 @@ using Microsoft.AspNetCore.Identity;
 using FluentValidation;
 using RecipeApi.Models;
 using RecipeApi.Validators;
+using FluentValidation.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -63,8 +64,11 @@ builder.Services.AddDbContext<RecipeDbContext>(options =>
 
 // Mapper
 builder.Services.AddAutoMapper(Assembly.GetExecutingAssembly());
+// builder.Services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
+//builder.Services.AddValidatorsFromAssemblyContaining<RegisterUserDtoValidator>();
 
-builder.Services.AddControllers();
+builder.Services.AddControllers().AddFluentValidation();
+//builder.Services.AddFluentValidationAutoValidation().AddFluentValidationClientsideAdapters();
 
 builder.Services.AddScoped<ErrorHandlingMiddleware>();
 
@@ -72,9 +76,9 @@ builder.Services.AddScoped<ErrorHandlingMiddleware>();
 builder.Services.AddScoped<RecipeSeeder>();
 
 builder.Services.AddScoped<IIngrededientService, IngredientService>();
-builder.Services.AddScoped<IAccountService, AccountService>();
 builder.Services.AddScoped<IPasswordHasher<User>, PasswordHasher<User>>();
 builder.Services.AddScoped<IValidator<RegisterUserDto>, RegisterUserDtoValidator>();
+builder.Services.AddScoped<IAccountService, AccountService>();
 
 builder.Services.AddHttpContextAccessor();
 

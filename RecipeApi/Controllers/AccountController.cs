@@ -11,6 +11,7 @@ using RecipeApi.Models;
 namespace RecipeApi.Controllers
 {
     [Route("api/account")]
+    [ApiController]
     public class AccountController : ControllerBase
     {
         private readonly ILogger<AccountController> _logger;

@@ -62,6 +62,7 @@ namespace RecipeApi.Service
                 .Users
                 .Include(u => u.Role)
                 .FirstOrDefault(u => u.Email == dto.Email);
+                
             if (user is null)
             {
                 throw new BadRequestException("Invalid username or password");
