@@ -24,13 +24,6 @@ namespace RecipeApi.Controllers
             _instructionService = instructionService;
         }
 
-        [HttpGet]
-        public ActionResult<IEnumerable<RecipeInstructionDto>> Get()
-        {
-            var instructions= _instructionService.GetRecipeInstructions();
-            return Ok(instructions);
-        }
-
         [HttpGet("{id}")]
         public ActionResult<RecipeInstruction> Get(int id)
         {
@@ -48,7 +41,7 @@ namespace RecipeApi.Controllers
         public ActionResult Create([FromBody] CreateRecipeInstructionDto instruction)
         {
             var id = _instructionService.AddRecipeInstruction(instruction);
-            return Created($"/instruction/{id}", null);
+            return Created($"/recipe-instruction/{id}", null);
         }
 
         [HttpPut("{id}")]

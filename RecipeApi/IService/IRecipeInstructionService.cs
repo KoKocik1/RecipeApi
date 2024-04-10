@@ -10,7 +10,6 @@ namespace RecipeApi.IService
     {
         void DeleteRecipeInstruction(int id);
         RecipeInstructionDto GetRecipeInstruction(int id);
-        IEnumerable<RecipeInstructionDto> GetRecipeInstructions();
         IEnumerable<RecipeInstructionDto> GetRecipeInstructionsByRecipeId(int recipeId);
         int AddRecipeInstruction(CreateRecipeInstructionDto recipeInstruction);
         void UpdateRecipeInstruction(int id, RecipeInstructionDto recipeInstruction);
