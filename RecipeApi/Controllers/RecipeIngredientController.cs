@@ -23,8 +23,8 @@ namespace RecipeApi.Controllers
             _ingredientService = ingredientService;
         }
 
-        [HttpGet]
-        public ActionResult<IEnumerable<RecipeIngredientDto>> GetByRecipeId([FromQuery] int recipeId = 0)
+        [HttpGet("recipe/{recipeId}")]
+        public ActionResult<IEnumerable<RecipeIngredientDto>> GetByRecipeId(int recipeId)
         {
                 var ingredients = _ingredientService.GetRecipeIngredients(recipeId);
                 return Ok(ingredients);
@@ -41,7 +41,7 @@ namespace RecipeApi.Controllers
         public ActionResult Create([FromBody] CreateRecipeIngredientDto ingredient)
         {
             var id = _ingredientService.AddRecipeIngredient(ingredient);
-            return Created($"/recipeingredient/{id}", null);
+            return Created($"/recipe-ingredient/{id}", null);
         }
 
         [HttpDelete("{id}")]
