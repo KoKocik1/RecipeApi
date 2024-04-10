@@ -63,12 +63,6 @@ namespace RecipeApi.Service
             return _mapper.Map<RecipeInstructionDto>(instruction);
         }
 
-        public IEnumerable<RecipeInstructionDto> GetRecipeInstructions()
-        {
-            var instructions = _dbContext.RecipeInstructions.ToList();
-            return _mapper.Map<IEnumerable<RecipeInstructionDto>>(instructions);
-        }
-
         public IEnumerable<RecipeInstructionDto> GetRecipeInstructionsByRecipeId(int recipeId)
         {
             var instructions = _dbContext.RecipeInstructions.Where(i => i.RecipeId == recipeId).ToList();
