@@ -26,7 +26,7 @@ namespace RecipeApi.Service
         public int AddInstruction(CreateRecipeInstructionDto instructionDto)
         {
             var instruction = _mapper.Map<RecipeInstruction>(instructionDto);
-            _dbContext.Recipe_Instructions.Add(instruction);
+            _dbContext.RecipeInstructions.Add(instruction);
             _dbContext.SaveChanges();
 
             return instruction.Id;
@@ -41,11 +41,11 @@ namespace RecipeApi.Service
         {
             _logger.LogInformation($"Deleting instruction with id {id}");
 
-            var instruction = _dbContext.Recipe_Instructions.FirstOrDefault(i => i.Id == id);
+            var instruction = _dbContext.RecipeInstructions.FirstOrDefault(i => i.Id == id);
 
             if (instruction is null) throw new NotFoundException("Instruction not found");
 
-            _dbContext.Recipe_Instructions.Remove(instruction);
+            _dbContext.RecipeInstructions.Remove(instruction);
             _dbContext.SaveChanges();
         }
 
@@ -56,7 +56,7 @@ namespace RecipeApi.Service
 
         public RecipeInstructionDto GetRecipeInstruction(int id)
         {
-            var instruction = _dbContext.Recipe_Instructions.FirstOrDefault(i => i.Id == id);
+            var instruction = _dbContext.RecipeInstructions.FirstOrDefault(i => i.Id == id);
 
             if (instruction is null) throw new NotFoundException("Instruction not found");
 
@@ -65,27 +65,27 @@ namespace RecipeApi.Service
 
         public IEnumerable<RecipeInstructionDto> GetRecipeInstructions()
         {
-            var instructions = _dbContext.Recipe_Instructions.ToList();
+            var instructions = _dbContext.RecipeInstructions.ToList();
             return _mapper.Map<IEnumerable<RecipeInstructionDto>>(instructions);
         }
 
         public IEnumerable<RecipeInstructionDto> GetRecipeInstructionsByRecipeId(int recipeId)
         {
-            var instructions = _dbContext.Recipe_Instructions.Where(i => i.RecipeId == recipeId).ToList();
+            var instructions = _dbContext.RecipeInstructions.Where(i => i.RecipeId == recipeId).ToList();
             return _mapper.Map<IEnumerable<RecipeInstructionDto>>(instructions);
         }
 
 
         public void UpdateRecipeInstruction(int id, RecipeInstructionDto instruction)
         {
-            var instructionToUpdate = _dbContext.Recipe_Instructions.FirstOrDefault(i => i.Id == id);
+            var instructionToUpdate = _dbContext.RecipeInstructions.FirstOrDefault(i => i.Id == id);
 
             if (instructionToUpdate is null) throw new NotFoundException("Instruction not found");
 
             instructionToUpdate.Instruction = instruction.Instruction;
             instructionToUpdate.Order = instruction.Order;
 
-            _dbContext.Recipe_Instructions.Update(instructionToUpdate);
+            _dbContext.RecipeInstructions.Update(instructionToUpdate);
             _dbContext.SaveChanges();
         }
     }

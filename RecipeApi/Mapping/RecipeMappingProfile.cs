@@ -15,6 +15,7 @@ namespace RecipeApi.Mapping
             CreateMap<CreateIngredientDto, Ingredient>();
             CreateMap<CreateRecipeInstructionDto, RecipeInstruction>();
             CreateMap<RecipeInstruction, RecipeInstructionDto>();
+            CreateMap<UnitIngredient, UnitIngredientDto>();
         }
     }
 }
