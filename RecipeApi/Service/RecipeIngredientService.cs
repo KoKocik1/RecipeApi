@@ -26,7 +26,7 @@ namespace RecipeApi.Service
         public int AddRecipeIngredient(CreateRecipeIngredientDto ingredient)
         {
             var recipeIngredient = _mapper.Map<RecipeIngredient>(ingredient);
-            _dbContext.Recipe_Ingredients.Add(recipeIngredient);
+            _dbContext.RecipeIngredients.Add(recipeIngredient);
             _dbContext.SaveChanges();
 
             return recipeIngredient.Id;
@@ -36,17 +36,17 @@ namespace RecipeApi.Service
         {
             _logger.LogInformation($"Deleting recipeIngredient with id {id}");
 
-            var recipeIngredient = _dbContext.Recipe_Ingredients.FirstOrDefault(i => i.Id == id);
+            var recipeIngredient = _dbContext.RecipeIngredients.FirstOrDefault(i => i.Id == id);
 
             if (recipeIngredient is null) throw new NotFoundException("Recipe ingredient not found");
 
-            _dbContext.Recipe_Ingredients.Remove(recipeIngredient);
+            _dbContext.RecipeIngredients.Remove(recipeIngredient);
             _dbContext.SaveChanges();
         }
 
         public RecipeIngredientDto GetRecipeIngredient(int id)
         {
-            var recipeIngredient = _dbContext.Recipe_Ingredients.FirstOrDefault(i => i.Id==id);
+            var recipeIngredient = _dbContext.RecipeIngredients.FirstOrDefault(i => i.Id==id);
 
             if (recipeIngredient is null) throw new NotFoundException("Recipe ingredient not found");
 
@@ -55,7 +55,7 @@ namespace RecipeApi.Service
 
         public IEnumerable<RecipeIngredientDto> GetRecipeIngredients(int recipeId)
         {
-            var recipeIngredients = _dbContext.Recipe_Ingredients.Where(i => i.RecipeId == recipeId).ToList();
+            var recipeIngredients = _dbContext.RecipeIngredients.Where(i => i.RecipeId == recipeId).ToList();
 
             return _mapper.Map<IEnumerable<RecipeIngredientDto>>(recipeIngredients);
         }
@@ -64,7 +64,7 @@ namespace RecipeApi.Service
         {
             _logger.LogInformation($"Updating recipe ingredient with id {id}");
 
-            var recipeIngredient = _dbContext.Recipe_Ingredients.FirstOrDefault(i => i.Id == id);
+            var recipeIngredient = _dbContext.RecipeIngredients.FirstOrDefault(i => i.Id == id);
 
             if (recipeIngredient is null) throw new NotFoundException("Recipe ingredient not found");
 

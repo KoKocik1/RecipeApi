@@ -10,7 +10,7 @@ using RecipeApi.Models;
 
 namespace RecipeApi.Controllers
 {
-    [Route("api/recipeingredient")]
+    [Route("api/recipe-ingredient")]
     [ApiController]
     public class RecipeIngredientController : Controller
     {

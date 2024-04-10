@@ -11,7 +11,7 @@ using RecipeApi.Models;
 
 namespace RecipeApi.Controllers
 {
-    [Route("api/instruction")]
+    [Route("api/recipe-instruction")]
     [ApiController]
     public class RecipeInstructionController : ControllerBase
     {
