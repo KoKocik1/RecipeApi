@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using RecipeApi.Database;
+using RecipeApi.Exceptions;
 using RecipeApi.IService;
 using RecipeApi.Models;
 
@@ -23,14 +24,15 @@ namespace RecipeApi.Service
         }
         public UnitIngredientDto GetUnit(int id)
         {
-            var unit = _dbContext.UnitsIngredients.FirstOrDefault(i => i.Id == id);
+            var unit = _dbContext.UnitIngredients.FirstOrDefault(i => i.Id == id);
+            if (unit is null) throw new NotFoundException("Unit not found");
             return _mapper.Map<UnitIngredientDto>(unit);
 
         }
 
         public IEnumerable<UnitIngredientDto> GetUnits()
         {
-            var units = _dbContext.UnitsIngredients.ToList();
+            var units = _dbContext.UnitIngredients.ToList();
             return _mapper.Map<IEnumerable<UnitIngredientDto>>(units);
         }
     }

@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using RecipeApi.Database;
@@ -11,9 +12,11 @@ using RecipeApi.Database;
 namespace RecipeApi.Migrations
 {
     [DbContext(typeof(RecipeDbContext))]
-    partial class RecipeDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240410115853_ChangeUnitIngredientIdName")]
+    partial class ChangeUnitIngredientIdName
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -168,7 +171,7 @@ namespace RecipeApi.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("UnitIngredients");
+                    b.ToTable("UnitsIngredients");
                 });
 
             modelBuilder.Entity("RecipeApi.Database.User", b =>

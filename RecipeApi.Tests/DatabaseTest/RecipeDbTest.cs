@@ -57,7 +57,7 @@ namespace RecipeApi.Tests
                 //Create Unit
                 var unit1 = new UnitIngredient { Type = "Test Unit 1"};
                 var unit2 = new UnitIngredient { Type = "Test Unit 2"};
-                context.UnitsIngredients.AddRange(unit1, unit2);
+                context.UnitIngredients.AddRange(unit1, unit2);
                 context.SaveChanges();
 
                 // Create instructions
@@ -70,8 +70,8 @@ namespace RecipeApi.Tests
                 context.Recipes.Add(recipe);
                 context.SaveChanges();
 
-                var recipeIngredient1 = new RecipeIngredient { Ingredient = ingredient1, Quantity = 1, IngredientId = ingredient1.Id, RecipeId = recipe.Id, Unit = unit1, Unit_ingredientId = unit1.Id};
-                var recipeIngredient2 = new RecipeIngredient { Ingredient = ingredient2, Quantity = 2, IngredientId = ingredient2.Id, RecipeId = recipe.Id, Unit = unit2, Unit_ingredientId = unit2.Id};
+                var recipeIngredient1 = new RecipeIngredient { Ingredient = ingredient1, Quantity = 1, IngredientId = ingredient1.Id, RecipeId = recipe.Id, UnitIngredient = unit1, UnitIngredientId = unit1.Id};
+                var recipeIngredient2 = new RecipeIngredient { Ingredient = ingredient2, Quantity = 2, IngredientId = ingredient2.Id, RecipeId = recipe.Id, UnitIngredient = unit2, UnitIngredientId = unit2.Id};
                 context.RecipeIngredients.AddRange(recipeIngredient1, recipeIngredient2);
                 context.SaveChanges();
 
@@ -92,7 +92,7 @@ namespace RecipeApi.Tests
                 Assert.Equal("Test Step 1", retrievedRecipe.Instructions.FirstOrDefault(r=>r.Order==1).Instruction);
                 Assert.Equal("Test Step 2", retrievedRecipe.Instructions.FirstOrDefault(r=>r.Order==2).Instruction);
 
-                var retrievedRecipeIngredients = context.RecipeIngredients.Include(r => r.Ingredient).Include(r => r.Unit).Where(r => r.RecipeId == retrievedRecipe.Id).ToList();
+                var retrievedRecipeIngredients = context.RecipeIngredients.Include(r => r.Ingredient).Include(r => r.UnitIngredient).Where(r => r.RecipeId == retrievedRecipe.Id).ToList();
 
                 Assert.NotNull(retrievedRecipeIngredients);
                 Assert.Equal(2, retrievedRecipeIngredients.Count);
@@ -100,8 +100,8 @@ namespace RecipeApi.Tests
                 Assert.NotNull(retrievedRecipeIngredients.FirstOrDefault(r=>r.Ingredient.Name == "Test Ingredient 2"));
                 Assert.NotNull(retrievedRecipeIngredients.FirstOrDefault(r=>r.Quantity == 1));
                 Assert.NotNull(retrievedRecipeIngredients.FirstOrDefault(r=>r.Quantity == 2));
-                Assert.NotNull(retrievedRecipeIngredients.FirstOrDefault(r=>r.Unit.Type == "Test Unit 1"));
-                Assert.NotNull(retrievedRecipeIngredients.FirstOrDefault(r=>r.Unit.Type == "Test Unit 2"));
+                Assert.NotNull(retrievedRecipeIngredients.FirstOrDefault(r=>r.UnitIngredient.Type == "Test Unit 1"));
+                Assert.NotNull(retrievedRecipeIngredients.FirstOrDefault(r=>r.UnitIngredient.Type == "Test Unit 2"));
             }
         }
 

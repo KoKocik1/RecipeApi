@@ -63,7 +63,7 @@ namespace RecipeApi.Service
             return _mapper.Map<IEnumerable<IngredientDto>>(ingredients);
         }
 
-        public void UpdateIngredient(int id, IngredientDto ingredient)
+        public void UpdateIngredient(int id, UpdateIngredientDto ingredient)
         {
             var ingredientToUpdate = _dbContext.Ingredients.FirstOrDefault(i => i.Id == id);
 

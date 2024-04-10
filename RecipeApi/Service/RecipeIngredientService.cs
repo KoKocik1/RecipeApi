@@ -23,7 +23,7 @@ namespace RecipeApi.Service
             _logger = logger;
         }
 
-        public int AddRecipeIngredient(CreateRecipeIngredientDto ingredient)
+        public int AddRecipeIngredient(CreateRecipeIngredientToExistingRecipeDto ingredient)
         {
             var recipeIngredient = _mapper.Map<RecipeIngredient>(ingredient);
             _dbContext.RecipeIngredients.Add(recipeIngredient);
@@ -60,7 +60,7 @@ namespace RecipeApi.Service
             return _mapper.Map<IEnumerable<RecipeIngredientDto>>(recipeIngredients);
         }
 
-        public void UpdateRecipeIngredient(int id, CreateRecipeIngredientDto ingredient)
+        public void UpdateRecipeIngredient(int id, UpdateRecipeIngredientDto ingredient)
         {
             _logger.LogInformation($"Updating recipe ingredient with id {id}");
 
@@ -70,7 +70,7 @@ namespace RecipeApi.Service
 
             recipeIngredient.IngredientId = ingredient.IngredientId;
             recipeIngredient.Quantity = ingredient.Quantity;
-            recipeIngredient.Unit_ingredientId = ingredient.UnitId;
+            recipeIngredient.UnitIngredientId = ingredient.UnitIngredientId;
 
             _dbContext.SaveChanges();
         }

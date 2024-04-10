@@ -12,7 +12,7 @@ namespace RecipeApi.Database
         public DbSet<Ingredient> Ingredients { get; set; }
         public DbSet<RecipeIngredient> RecipeIngredients { get; set; }
         public DbSet<RecipeInstruction> RecipeInstructions { get; set; }
-        public DbSet<UnitIngredient> UnitsIngredients { get; set; }
+        public DbSet<UnitIngredient> UnitIngredients { get; set; }
         public DbSet<Role> Roles { get; set; }
         public DbSet<User> Users { get; set; }
 

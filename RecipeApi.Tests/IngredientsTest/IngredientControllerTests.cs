@@ -230,7 +230,7 @@ namespace RecipeApi.Tests.IngredientsTest
                 .Options;
 
             // Arrange
-            var ingredientDto = new IngredientDto { Name = "Pepper" };
+            var ingredientDto = new UpdateIngredientDto { Name = "Pepper" };
             var notExistingId = 999;
 
             using (var context = new RecipeDbContext(_options))
@@ -265,7 +265,7 @@ namespace RecipeApi.Tests.IngredientsTest
                 var addResult = controller.AddIngredient(createIngredientDto) as CreatedResult;
                 var ingredientId = int.Parse(addResult.Location.Split("/").Last());  //TODO
 
-                var updatedIngredient = new IngredientDto { Name = name2 };
+                var updatedIngredient = new UpdateIngredientDto { Name = name2 };
 
                 // Act
                 var resultUpdate = controller.UpdateIngredient(ingredientId, updatedIngredient);

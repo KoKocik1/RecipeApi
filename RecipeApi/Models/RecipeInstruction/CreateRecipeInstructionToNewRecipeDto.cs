@@ -5,10 +5,9 @@ using System.Threading.Tasks;
 
 namespace RecipeApi.Models
 {
-    public class CreateRecipeInstructionDto
+    public class CreateRecipeInstructionToNewRecipeDto
     {
         public string Instruction { get; set; }
         public int Order { get; set; }
-        public int RecipeId { get; set; }
     }
 }

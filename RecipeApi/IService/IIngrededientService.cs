@@ -11,7 +11,7 @@ namespace RecipeApi.IService
         IngredientDto GetIngredient(int id);
         IEnumerable<IngredientDto> GetIngredients();
         int AddIngredient(CreateIngredientDto ingredient);
-        void UpdateIngredient(int id, IngredientDto ingredient);
+        void UpdateIngredient(int id, UpdateIngredientDto ingredient);
         void DeleteIngredient(int id);
 
     }
