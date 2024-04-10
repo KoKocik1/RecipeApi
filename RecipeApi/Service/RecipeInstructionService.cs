@@ -25,6 +25,8 @@ namespace RecipeApi.Service
 
         public int AddRecipeInstruction(CreateRecipeInstructionToExistingRecipeDto instructionDto)
         {
+            if(instructionDto is null) throw new BadRequestException("Empty instruction data");
+
             var instruction = _mapper.Map<RecipeInstruction>(instructionDto);
             _dbContext.RecipeInstructions.Add(instruction);
             _dbContext.SaveChanges();
@@ -56,6 +58,9 @@ namespace RecipeApi.Service
         public IEnumerable<RecipeInstructionDto> GetRecipeInstructionsByRecipeId(int recipeId)
         {
             var instructions = _dbContext.RecipeInstructions.Where(i => i.RecipeId == recipeId).OrderBy(i => i.Order).ToList();
+            
+            if (instructions.Count==0) throw new NotFoundException("Instructions not found");
+
             return _mapper.Map<IEnumerable<RecipeInstructionDto>>(instructions);
         }
 

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
+using Microsoft.EntityFrameworkCore;
 using RecipeApi.Database;
 using RecipeApi.Exceptions;
 using RecipeApi.IService;
@@ -25,6 +26,8 @@ namespace RecipeApi.Service
 
         public int AddRecipeIngredient(CreateRecipeIngredientToExistingRecipeDto ingredient)
         {
+            //TODO: Move to validator
+            if(ingredient is null) throw new BadRequestException("Empty ingredient data");
             var recipeIngredient = _mapper.Map<RecipeIngredient>(ingredient);
             _dbContext.RecipeIngredients.Add(recipeIngredient);
             _dbContext.SaveChanges();
@@ -46,7 +49,11 @@ namespace RecipeApi.Service
 
         public RecipeIngredientDto GetRecipeIngredient(int id)
         {
-            var recipeIngredient = _dbContext.RecipeIngredients.FirstOrDefault(i => i.Id==id);
+            //var recipeIngredient = _dbContext.RecipeIngredients.FirstOrDefault(i => i.Id==id);
+            var recipeIngredient= _dbContext.RecipeIngredients.Where(i => i.Id == id)
+                .Include(i => i.Ingredient)
+                .Include(i => i.UnitIngredient)
+                .FirstOrDefault();
 
             if (recipeIngredient is null) throw new NotFoundException("Recipe ingredient not found");
 
@@ -55,7 +62,13 @@ namespace RecipeApi.Service
 
         public IEnumerable<RecipeIngredientDto> GetRecipeIngredients(int recipeId)
         {
-            var recipeIngredients = _dbContext.RecipeIngredients.Where(i => i.RecipeId == recipeId).ToList();
+            var recipeIngredients = _dbContext.RecipeIngredients
+            .Where(i => i.RecipeId == recipeId)
+            .Include(i => i.Ingredient)
+            .Include(i => i.UnitIngredient)
+            .ToList();
+
+            if (recipeIngredients.Count==0) throw new NotFoundException("Recipe ingredients not found");
 
             return _mapper.Map<IEnumerable<RecipeIngredientDto>>(recipeIngredients);
         }
@@ -63,6 +76,8 @@ namespace RecipeApi.Service
         public void UpdateRecipeIngredient(int id, UpdateRecipeIngredientDto ingredient)
         {
             _logger.LogInformation($"Updating recipe ingredient with id {id}");
+
+            if(ingredient is null) throw new BadRequestException("Empty ingredient data");
 
             var recipeIngredient = _dbContext.RecipeIngredients.FirstOrDefault(i => i.Id == id);
 

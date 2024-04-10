@@ -24,6 +24,9 @@ namespace RecipeApi.Service
         }
         public int AddRecipe(CreateRecipeDto recipe)
         {
+
+            if(recipe is null) throw new BadRequestException("Empty recipe data");
+
             var recipeEntity = _mapper.Map<Recipe>(recipe);
             //TODO: temporary 
             recipeEntity.UserId = 4;
@@ -31,24 +34,6 @@ namespace RecipeApi.Service
             _dbContext.Recipes.Add(recipeEntity);
             _dbContext.SaveChanges();
 
-            // if(recipe.Ingredients != null)
-            // {
-            //     foreach (var ingredient in recipe.Ingredients)
-            //     {
-            //         var recipeIngredient = _mapper.Map<RecipeIngredient>(ingredient);
-            //         recipeIngredient.RecipeId = recipeEntity.Id;
-            //         _dbContext.RecipeIngredients.Add(recipeIngredient);
-            //     }
-            // }
-            // if(recipe.Instructions != null)
-            // {
-            //     foreach (var instruction in recipe.Instructions)
-            //     {
-            //         var recipeInstruction = _mapper.Map<RecipeInstruction>(instruction);
-            //         recipeInstruction.RecipeId = recipeEntity.Id;
-            //         _dbContext.RecipeInstructions.Add(recipeInstruction);
-            //     }
-            // }
             return recipeEntity.Id;
         }
 
@@ -64,46 +49,56 @@ namespace RecipeApi.Service
         public RecipeDetailsDto GetRecipe(int id)
         {
             var recipe = _dbContext.Recipes
-            .Include(r=>r.Ingredients)
+            .Include(r => r.Ingredients)
                 .ThenInclude(ri => ri.Ingredient)
-            .Include(r=>r.Ingredients)
-                .ThenInclude(ri=>ri.UnitIngredient)
-            .Include(r=>r.Instructions)
-            .Include(r=>r.User)
+            .Include(r => r.Ingredients)
+                .ThenInclude(ri => ri.UnitIngredient)
+            .Include(r => r.Instructions)
+            .Include(r => r.User)
             .FirstOrDefault(r => r.Id == id);
+
+            if (recipe is null) throw new NotFoundException("Recipe not found");
 
             recipe.Instructions = recipe.Instructions.OrderBy(i => i.Order).ToList();
 
-            if (recipe is null) throw new NotFoundException("Recipe not found");
             return _mapper.Map<RecipeDetailsDto>(recipe);
         }
 
         public IEnumerable<RecipeDto> GetRecipes()
         {
             var recipes = _dbContext.Recipes.ToList();
+
+            if (recipes is null) throw new NotFoundException("No recipes found");
+
             return _mapper.Map<IEnumerable<RecipeDto>>(recipes);
         }
 
         public IEnumerable<RecipeDto> GetRecipesByAuthor(int authorId)
         {
             var recipes = _dbContext.Recipes.Where(r => r.UserId == authorId)
-            .Include(r=>r.User)
-            .Include(r=>r.Ingredients)
-            .Include(r=>r.Instructions)
+            .Include(r => r.User)
+            .Include(r => r.Ingredients)
+            .Include(r => r.Instructions)
             .ToList();
+
+            if (recipes.Count==0) throw new NotFoundException("No recipes found for this author");
+
             return _mapper.Map<IEnumerable<RecipeDto>>(recipes);
         }
 
         public void UpdateRecipe(int id, UpdateRecipeDto recipe)
         {
             _logger.LogInformation($"Updating recipe with id {id}");
+
+            if (recipe is null) throw new BadRequestException("Invalid recipe");
             var recipeEntity = _dbContext.Recipes.FirstOrDefault(r => r.Id == id);
             if (recipeEntity is null) throw new NotFoundException("Recipe not found");
             recipeEntity.Title = recipe.Title;
             recipeEntity.Description = recipe.Description;
             recipeEntity.Portions = recipe.Portions;
             recipeEntity.TimeToCook = recipe.TimeToCook;
-            recipeEntity.UpdatedAt = DateTime.Now;
+            recipeEntity.UpdatedAt = DateTime.Now.ToUniversalTime();
+
             // recipeEntity.Instructions = _mapper.Map<List<RecipeInstruction>>(recipe.Instructions);
             // recipeEntity.Ingredients = _mapper.Map<List<RecipeIngredient>>(recipe.Ingredients);
 
