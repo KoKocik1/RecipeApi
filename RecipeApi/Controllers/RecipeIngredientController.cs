@@ -38,7 +38,7 @@ namespace RecipeApi.Controllers
         }
 
         [HttpPost]
-        public ActionResult Create([FromBody] CreateRecipeIngredientDto ingredient)
+        public ActionResult Create([FromBody] CreateRecipeIngredientToExistingRecipeDto ingredient)
         {
             var id = _ingredientService.AddRecipeIngredient(ingredient);
             return Created($"/recipe-ingredient/{id}", null);
@@ -52,7 +52,7 @@ namespace RecipeApi.Controllers
         }
 
         [HttpPut("{id}")]
-        public ActionResult Update(int id, [FromBody] CreateRecipeIngredientDto ingredient)
+        public ActionResult Update(int id, [FromBody] UpdateRecipeIngredientDto ingredient)
         {
             _ingredientService.UpdateRecipeIngredient(id, ingredient);
             return Ok();

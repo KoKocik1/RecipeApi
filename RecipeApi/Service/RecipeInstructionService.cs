@@ -23,8 +23,10 @@ namespace RecipeApi.Service
             _logger = logger;
         }
 
-        public int AddInstruction(CreateRecipeInstructionDto instructionDto)
+        public int AddRecipeInstruction(CreateRecipeInstructionToExistingRecipeDto instructionDto)
         {
+            if(instructionDto is null) throw new BadRequestException("Empty instruction data");
+
             var instruction = _mapper.Map<RecipeInstruction>(instructionDto);
             _dbContext.RecipeInstructions.Add(instruction);
             _dbContext.SaveChanges();
@@ -32,12 +34,7 @@ namespace RecipeApi.Service
             return instruction.Id;
         }
 
-        public int AddRecipeInstruction(CreateRecipeInstructionDto recipeInstruction)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void DeleteInstruction(int id)
+        public void DeleteRecipeInstruction(int id)
         {
             _logger.LogInformation($"Deleting instruction with id {id}");
 
@@ -47,11 +44,6 @@ namespace RecipeApi.Service
 
             _dbContext.RecipeInstructions.Remove(instruction);
             _dbContext.SaveChanges();
-        }
-
-        public void DeleteRecipeInstruction(int id)
-        {
-            throw new NotImplementedException();
         }
 
         public RecipeInstructionDto GetRecipeInstruction(int id)
@@ -65,12 +57,15 @@ namespace RecipeApi.Service
 
         public IEnumerable<RecipeInstructionDto> GetRecipeInstructionsByRecipeId(int recipeId)
         {
-            var instructions = _dbContext.RecipeInstructions.Where(i => i.RecipeId == recipeId).ToList();
+            var instructions = _dbContext.RecipeInstructions.Where(i => i.RecipeId == recipeId).OrderBy(i => i.Order).ToList();
+            
+            if (instructions.Count==0) throw new NotFoundException("Instructions not found");
+
             return _mapper.Map<IEnumerable<RecipeInstructionDto>>(instructions);
         }
 
 
-        public void UpdateRecipeInstruction(int id, RecipeInstructionDto instruction)
+        public void UpdateRecipeInstruction(int id, UpdateRecipeInstructionDto instruction)
         {
             var instructionToUpdate = _dbContext.RecipeInstructions.FirstOrDefault(i => i.Id == id);
 

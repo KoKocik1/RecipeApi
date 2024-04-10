@@ -49,7 +49,7 @@ namespace RecipeApi.Controllers
 
         [HttpPut("{id}")]
         // [Authorize]
-        public ActionResult UpdateIngredient(int id, [FromBody] IngredientDto ingredient)
+        public ActionResult UpdateIngredient(int id, [FromBody] UpdateIngredientDto ingredient)
         {
             _ingredientService.UpdateIngredient(id, ingredient);
             return Ok();

@@ -26,7 +26,12 @@ namespace RecipeApi.Seeder
                     _dbContext.Database.Migrate();
                 }
 
-
+                if (!_dbContext.UnitIngredients.Any())
+                {
+                    var units = getUnits();
+                    _dbContext.UnitIngredients.AddRange(units);
+                    _dbContext.SaveChanges();
+                }
                 if (!_dbContext.Roles.Any())
                 {
                     var roles = getRoles();
@@ -56,6 +61,58 @@ namespace RecipeApi.Seeder
                 }
             };
             return roles;
+        }
+        private IEnumerable<UnitIngredient> getUnits()
+        {
+            var units = new List<UnitIngredient>()
+            {
+                new UnitIngredient(){
+                    Type="Grams",
+                },
+                new UnitIngredient(){
+                    Type="Kilograms",
+                },
+                new UnitIngredient(){
+                    Type="Liters",
+                },
+                new UnitIngredient(){
+                    Type="Milliliters",
+                },
+                new UnitIngredient(){
+                    Type="Teaspoons",
+                },
+                new UnitIngredient(){
+                    Type="Tablespoons",
+                },
+                new UnitIngredient(){
+                    Type="Cups",
+                },
+                new UnitIngredient(){
+                    Type="Pieces",
+                },
+                new UnitIngredient(){
+                    Type="Slices",
+                },
+                new UnitIngredient(){
+                    Type="Cloves",
+                },
+                new UnitIngredient(){
+                    Type="Handfuls",
+                },
+                new UnitIngredient(){
+                    Type="Pinches",
+                },
+                new UnitIngredient(){
+                    Type="Drops",
+                },
+                new UnitIngredient(){
+                    Type="Cans",
+                },
+                new UnitIngredient(){
+                    Type="Bottles",
+                }   
+            };
+            return units;
         }
         private IEnumerable<Ingredient> getIngredients()
         {

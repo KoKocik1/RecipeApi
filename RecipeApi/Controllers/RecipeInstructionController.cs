@@ -38,14 +38,14 @@ namespace RecipeApi.Controllers
             return Ok(instructions);
         }
         [HttpPost]
-        public ActionResult Create([FromBody] CreateRecipeInstructionDto instruction)
+        public ActionResult Create([FromBody] CreateRecipeInstructionToExistingRecipeDto instruction)
         {
             var id = _instructionService.AddRecipeInstruction(instruction);
             return Created($"/recipe-instruction/{id}", null);
         }
 
         [HttpPut("{id}")]
-        public ActionResult Update(int id, [FromBody] RecipeInstructionDto instruction)
+        public ActionResult Update(int id, [FromBody] UpdateRecipeInstructionDto instruction)
         {
             _instructionService.UpdateRecipeInstruction(id, instruction);
             return Ok();

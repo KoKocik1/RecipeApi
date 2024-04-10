@@ -40,6 +40,8 @@ namespace RecipeApi.Service
 
         public void RegisterUser(RegisterUserDto dto)
         {
+            if(dto is null) throw new BadRequestException("Empty user data");
+
             var newUser = new User()
             {
                 FirstName = dto.FirstName,
