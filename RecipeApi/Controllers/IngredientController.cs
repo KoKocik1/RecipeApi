@@ -48,7 +48,7 @@ namespace RecipeApi.Controllers
         }
 
         [HttpPut("{id}")]
-        [Authorize]
+        [Authorize(Roles ="Admin")]
         public ActionResult UpdateIngredient(int id, [FromBody] UpdateIngredientDto ingredient)
         {
             _ingredientService.UpdateIngredient(id, ingredient);
