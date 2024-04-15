@@ -24,7 +24,7 @@ namespace RecipeApi.Controllers
         }
 
         [HttpGet]
-        // [AllowAnonymous]
+        [AllowAnonymous]
         public ActionResult<IEnumerable<IngredientDto>> GetIngredients()
         {
             var ingredients = _ingredientService.GetIngredients();
@@ -32,7 +32,7 @@ namespace RecipeApi.Controllers
         }
 
         [HttpGet("{id}")]
-        //  [AllowAnonymous]
+        [AllowAnonymous]
         public ActionResult<IngredientDto> GetIngredient(int id)
         {
             var ingredient = _ingredientService.GetIngredient(id);
@@ -40,7 +40,7 @@ namespace RecipeApi.Controllers
         }
 
         [HttpPost]
-        // [Authorize]
+        [Authorize]
         public ActionResult AddIngredient([FromBody] CreateIngredientDto ingredient)
         {
             var id=_ingredientService.AddIngredient(ingredient);
@@ -48,7 +48,7 @@ namespace RecipeApi.Controllers
         }
 
         [HttpPut("{id}")]
-        // [Authorize]
+        [Authorize]
         public ActionResult UpdateIngredient(int id, [FromBody] UpdateIngredientDto ingredient)
         {
             _ingredientService.UpdateIngredient(id, ingredient);
@@ -56,7 +56,7 @@ namespace RecipeApi.Controllers
         }
 
         [HttpDelete("{id}")]
-        // [Authorize]
+        [Authorize(Roles ="Admin")]
         public ActionResult DeleteIngredient(int id)
         {
             _ingredientService.DeleteIngredient(id);
