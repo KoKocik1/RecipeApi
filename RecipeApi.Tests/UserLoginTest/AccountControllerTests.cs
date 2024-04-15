@@ -177,7 +177,7 @@ namespace RecipeApi.Tests.UserLoginTest
             using (var context = new RecipeDbContext(_options))
             {
                 // Arrange
-                var service = new AccountService(context, _mapper, _logger, _passwordHasher, _authenticationSettings);
+                var service = new AccountService(context, _mapper,_logger, _passwordHasher, _authenticationSettings);
                 var controller = new AccountController(service, _loggerController);
 
                 var userDto = new RegisterUserDto

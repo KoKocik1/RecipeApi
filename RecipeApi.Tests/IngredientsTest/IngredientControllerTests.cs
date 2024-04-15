@@ -18,39 +18,61 @@ using RecipeApi.Service;
 
 namespace RecipeApi.Tests.IngredientsTest
 {
-    public class IngredientControllerTests
+    public class IngredientControllerTests : IDisposable
     {
         private readonly IMapper _mapper;
         private readonly ILogger<IngredientService> _logger;
 
+        DbContextOptions<RecipeDbContext> _options;
+
+        CreateIngredientDto mockIngredient1;
+        CreateIngredientDto mockIngredient2;
         public IngredientControllerTests()
         {
-            // Create a mapper instance (you can use AutoMapper or a similar library)
-            _mapper = new Mapper(new MapperConfiguration(cfg => cfg.AddProfile<RecipeMappingProfile>()));
+            mockIngredient1 = new CreateIngredientDto { Name = "IngredientControllerTests1" };
+            mockIngredient2 = new CreateIngredientDto { Name = "IngredientControllerTests2" };
 
-            // Create a logger instance
+            _options = new DbContextOptionsBuilder<RecipeDbContext>()
+                        .UseInMemoryDatabase(databaseName: "DatabaseTest")
+                        .Options;
+
+            _mapper = new Mapper(new MapperConfiguration(cfg => cfg.AddProfile<RecipeMappingProfile>()));
             _logger = new LoggerFactory().CreateLogger<IngredientService>();
+            cleanDatabase();
+
 
         }
 
+        private void cleanDatabase()
+        {
+            using (var context = new RecipeDbContext(_options))
+            {
+                var ingredientToRemove = context.Ingredients.Where(i => i.Name == mockIngredient1.Name);
+                context.Ingredients.RemoveRange(ingredientToRemove);
+                ingredientToRemove = context.Ingredients.Where(i => i.Name == mockIngredient2.Name);
+                context.Ingredients.RemoveRange(ingredientToRemove);
+                context.SaveChanges();
+            }
+        }
+        public void Dispose()
+        {
+        }
+        
         //get all ingredients
         [Fact]
-        public void GetIngredients_ReturnsOkObjectResult_WithListOfIngredients()
+        public void GetIngredients_ReturnsOkObjectResult()
         {
             // Set up in-memory database options
-            DbContextOptions<RecipeDbContext> _options = new DbContextOptionsBuilder<RecipeDbContext>()
-                .UseInMemoryDatabase(databaseName: "GetIngredients_ReturnsOkObjectResult_WithListOfIngredients")
-                .Options;
-
             using (var context = new RecipeDbContext(_options))
             {
                 // Arrange
                 var service = new IngredientService(context, _mapper, _logger);
                 var controller = new IngredientController(service);
 
+                var countOfIngredients = context.Ingredients.Count();
 
-                controller.AddIngredient(new CreateIngredientDto { Name = "Salt" });
-                controller.AddIngredient(new CreateIngredientDto { Name = "Sugar" });
+                controller.AddIngredient(mockIngredient1);
+                controller.AddIngredient(mockIngredient2);
 
                 // Act
                 var result = controller.GetIngredients();
@@ -58,37 +80,30 @@ namespace RecipeApi.Tests.IngredientsTest
                 // Assert
                 var actionResult = Assert.IsType<OkObjectResult>(result.Result);
                 var returnValue = Assert.IsType<List<IngredientDto>>(actionResult.Value);
-                Assert.Equal(2, returnValue.Count);
+                Assert.Equal(countOfIngredients + 2, returnValue.Count);
             }
         }
 
         //get specific ingredient
         [Fact]
-        public void GetIngredient_ReturnsOkObjectResult_WithIngredient()
+        public void GetIngredient_ReturnsOkObjectResult()
         {
-            // Set up in-memory database options
-            DbContextOptions<RecipeDbContext> _options = new DbContextOptionsBuilder<RecipeDbContext>()
-                .UseInMemoryDatabase(databaseName: "GetIngredient_ReturnsOkObjectResult_WithIngredient") //TODO
-                .Options;
-
-            // Arrange
-            var mockIngredient = new CreateIngredientDto { Name = "Salt" };
-
             using (var context = new RecipeDbContext(_options))
             {
                 var service = new IngredientService(context, _mapper, _logger);
                 var controller = new IngredientController(service);
 
-                var addResult = controller.AddIngredient(mockIngredient) as CreatedResult;
+                var result = controller.AddIngredient(mockIngredient1);
+                var addResult=result as CreatedResult;
                 var ingredientId = int.Parse(addResult.Location.Split("/").Last());  //TODO
 
                 // Act
-                var result = controller.GetIngredient(ingredientId);
+                var result1 = controller.GetIngredient(ingredientId);
 
                 // Assert
-                var actionResult = Assert.IsType<OkObjectResult>(result.Result);
+                var actionResult = Assert.IsType<OkObjectResult>(result1.Result);
                 var returnValue = Assert.IsType<IngredientDto>(actionResult.Value);
-                Assert.Equal(ingredientId, returnValue.Id);
+                Assert.Equal(mockIngredient1.Name, returnValue.Name);
             }
         }
 
@@ -96,11 +111,6 @@ namespace RecipeApi.Tests.IngredientsTest
         [Fact]
         public void GetIngredient_NotFound_ReturnsNotFoundResult()
         {
-            // Set up in-memory database options
-            DbContextOptions<RecipeDbContext> _options = new DbContextOptionsBuilder<RecipeDbContext>()
-                .UseInMemoryDatabase(databaseName: "GetIngredient_NotFound_ReturnsNotFoundResult")
-                .Options;
-
             // Arrange
             var ingredientId = 999;
 
@@ -119,13 +129,8 @@ namespace RecipeApi.Tests.IngredientsTest
         [Fact]
         public void AddIngredient_ReturnsCreatedResult()
         {
-            // Set up in-memory database options
-            DbContextOptions<RecipeDbContext> _options = new DbContextOptionsBuilder<RecipeDbContext>()
-                .UseInMemoryDatabase(databaseName: "AddIngredient_ReturnsCreatedResult")
-                .Options;
-
             // Arrange
-            var newIngredient = new CreateIngredientDto { Name = "Pepper" };
+            //var newIngredient = new CreateIngredientDto { Name = "Pepper" };
 
             using (var context = new RecipeDbContext(_options))
             {
@@ -133,12 +138,14 @@ namespace RecipeApi.Tests.IngredientsTest
                 var controller = new IngredientController(service);
 
                 // Act
-                var result = controller.AddIngredient(newIngredient);
+                var result = controller.AddIngredient(mockIngredient1);
+                var addResult = result as CreatedResult;
+                var ingredientId = int.Parse(addResult.Location.Split("/").Last());  //TODO
 
                 // Assert
                 var createdResult = Assert.IsType<CreatedResult>(result);
                 Assert.NotNull(createdResult.Location);
-                Assert.Equal($"/ingredient/1", createdResult.Location);
+                Assert.Equal($"/ingredient/{ingredientId}", createdResult.Location);
             }
         }
 
@@ -146,23 +153,18 @@ namespace RecipeApi.Tests.IngredientsTest
         [Fact]
         public void AddIngredient_ReturnsBadRequestException()
         {
-            // Set up in-memory database options
-            DbContextOptions<RecipeDbContext> _options = new DbContextOptionsBuilder<RecipeDbContext>()
-                .UseInMemoryDatabase(databaseName: "AddIngredient_ReturnsBadRequestException")
-                .Options;
-
             // Arrange
-            var newIngredient = new CreateIngredientDto { Name = "Pepper" };
+            //var newIngredient = new CreateIngredientDto { Name = "Pepper" };
 
             using (var context = new RecipeDbContext(_options))
             {
                 var service = new IngredientService(context, _mapper, _logger);
                 var controller = new IngredientController(service);
 
-                controller.AddIngredient(newIngredient);
+                controller.AddIngredient(mockIngredient1);
 
                 // Act & Assert
-                var ex = Assert.Throws<BadRequestException>(() => controller.AddIngredient(newIngredient));
+                var ex = Assert.Throws<BadRequestException>(() => controller.AddIngredient(mockIngredient1));
                 Assert.Equal("Ingredient already exists", ex.Message);
             }
         }
@@ -171,11 +173,6 @@ namespace RecipeApi.Tests.IngredientsTest
         [Fact]
         public void DeleteIngredient_NotFound_ReturnsNotFoundResult()
         {
-            // Set up in-memory database options
-            DbContextOptions<RecipeDbContext> _options = new DbContextOptionsBuilder<RecipeDbContext>()
-                .UseInMemoryDatabase(databaseName: "DeleteIngredient_NotFound_ReturnsNotFoundResult")
-                .Options;
-
             // Arrange
             var ingredientId = 999;
 
@@ -194,20 +191,12 @@ namespace RecipeApi.Tests.IngredientsTest
         [Fact]
         public void DeleteIngredient_ReturnsNoContentResult()
         {
-            // Set up in-memory database options
-            DbContextOptions<RecipeDbContext> _options = new DbContextOptionsBuilder<RecipeDbContext>()
-                .UseInMemoryDatabase(databaseName: "DeleteIngredient_ReturnsNoContentResult")
-                .Options;
-
-            // Arrange
-            var mockIngredient = new CreateIngredientDto { Name = "Salt" };
-
             using (var context = new RecipeDbContext(_options))
             {
                 var service = new IngredientService(context, _mapper, _logger);
                 var controller = new IngredientController(service);
 
-                var addResult = controller.AddIngredient(mockIngredient) as CreatedResult;
+                var addResult = controller.AddIngredient(mockIngredient1) as CreatedResult;
                 var ingredientId = int.Parse(addResult.Location.Split("/").Last());  //TODO
 
                 // Act
@@ -224,13 +213,8 @@ namespace RecipeApi.Tests.IngredientsTest
         [Fact]
         public void UpdateIngredient_NotFound_ReturnsNotFoundResult()
         {
-            // Set up in-memory database options
-            DbContextOptions<RecipeDbContext> _options = new DbContextOptionsBuilder<RecipeDbContext>()
-                .UseInMemoryDatabase(databaseName: "UpdateIngredient_NotFound_ReturnsNotFoundResult")
-                .Options;
-
             // Arrange
-            var ingredientDto = new UpdateIngredientDto { Name = "Pepper" };
+            var ingredientDto = new UpdateIngredientDto { Name = "NoFoundExample" };
             var notExistingId = 999;
 
             using (var context = new RecipeDbContext(_options))
@@ -248,24 +232,16 @@ namespace RecipeApi.Tests.IngredientsTest
         [Fact]
         public void UpdateIngredient_ReturnsNoContentResult()
         {
-            // Set up in-memory database options
-            DbContextOptions<RecipeDbContext> _options = new DbContextOptionsBuilder<RecipeDbContext>()
-                .UseInMemoryDatabase(databaseName: "UpdateIngredient_ReturnsNoContentResult")
-                .Options;
-
             // Arrange
-            var name1= "Salt";
-            var name2 = "Pepper";
-            var createIngredientDto = new CreateIngredientDto { Name = name1 };
             using (var context = new RecipeDbContext(_options))
             {
                 var service = new IngredientService(context, _mapper, _logger);
                 var controller = new IngredientController(service);
 
-                var addResult = controller.AddIngredient(createIngredientDto) as CreatedResult;
+                var addResult = controller.AddIngredient(mockIngredient1) as CreatedResult;
                 var ingredientId = int.Parse(addResult.Location.Split("/").Last());  //TODO
 
-                var updatedIngredient = new UpdateIngredientDto { Name = name2 };
+                var updatedIngredient = new UpdateIngredientDto { Name = mockIngredient2.Name };
 
                 // Act
                 var resultUpdate = controller.UpdateIngredient(ingredientId, updatedIngredient);
@@ -275,8 +251,7 @@ namespace RecipeApi.Tests.IngredientsTest
                 Assert.IsType<OkResult>(resultUpdate);
                 var actionResult = Assert.IsType<OkObjectResult>(resultGet.Result);
                 var returnValue = Assert.IsType<IngredientDto>(actionResult.Value);
-                Assert.NotEqual(name1, returnValue.Name);
-                Assert.Equal(name2, returnValue.Name); 
+                Assert.Equal(mockIngredient2.Name, returnValue.Name);
             }
         }
 
