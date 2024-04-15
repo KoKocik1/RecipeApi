@@ -14,7 +14,7 @@ namespace RecipeApi.Tests
         {
             // Arrange
             var options = new DbContextOptionsBuilder<RecipeDbContext>()
-                .UseInMemoryDatabase(databaseName: "DbContext_CanAddAndRetrieveRecipes")
+                .UseInMemoryDatabase(databaseName: "DatabaseTest")
                 .Options;
 
             // Act
@@ -24,15 +24,13 @@ namespace RecipeApi.Tests
                 var recipe = new Recipe { Title = "Test Recipe", Portions = 4, TimeToCook = "30 min", CreatedAt=DateTime.Now, Description = "Test Description"};
                 context.Recipes.Add(recipe);
                 context.SaveChanges();
-            }
 
-            // Assert
-            using (var context = new RecipeDbContext(options))
-            {
                 var retrievedRecipe = context.Recipes.FirstOrDefault(r => r.Title == "Test Recipe");
                 Assert.NotNull(retrievedRecipe);
                 Assert.Equal("Test Description", retrievedRecipe.Description);
                 Assert.Equal("Test Recipe", retrievedRecipe.Title);
+
+                context.Recipes.Remove(retrievedRecipe);
             }
         }
 
