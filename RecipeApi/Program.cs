@@ -14,6 +14,7 @@ using FluentValidation;
 using RecipeApi.Models;
 using RecipeApi.Validators;
 using FluentValidation.AspNetCore;
+using Microsoft.AspNetCore.Authorization;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -43,18 +44,14 @@ builder.Services.AddAuthentication(option =>
         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(authenticationSettings.JwtKey)),
     };
 });
-// builder.Services.AddAuthorization(option =>
-// {
-//     option.AddPolicy("HasNationality", builder => builder.RequireClaim("Nationality", "German", "Polish"));
-//     option.AddPolicy("atleast20", builder => builder.AddRequirements(new MinimumAgeRequirement(20)));
-//     option.AddPolicy("CreatedAtLeast1Recipe", builder => builder.AddRequirements(new MinimumOneRestaurant(1)));
-// });
+
+builder.Services.AddAuthorization(option =>
+{
+    option.AddPolicy("SameAuthor", policy => policy.AddRequirements(new SameAuthorRequirement()));
+});
 
 //Authorization
-// builder.Services.AddScoped<IAuthorizationHandler, MinimumTwoRestaurantHandler>();
-// builder.Services.AddScoped<IAuthorizationHandler, MinimumAgeRequirementHandler>();
-// builder.Services.AddScoped<IAuthorizationHandler, ResourceOperationRequirementHandler>();
-
+builder.Services.AddScoped<IAuthorizationHandler, SameAuthorRequirementHandler>();
 
 
 builder.Services.AddDbContext<RecipeDbContext>(options =>
@@ -81,6 +78,7 @@ builder.Services.AddScoped<IRecipeInstructionService, RecipeInstructionService>(
 builder.Services.AddScoped<IRecipeIngredientService, RecipeIngredientService>();
 builder.Services.AddScoped<IUnitIngredientService, UnitIngredientService>();
 builder.Services.AddScoped<IRecipeService, RecipeService>();
+builder.Services.AddScoped<IUserContentService, UserContentService>();
 
 builder.Services.AddScoped<IPasswordHasher<User>, PasswordHasher<User>>();
 builder.Services.AddScoped<IValidator<RegisterUserDto>, RegisterUserDtoValidator>();
@@ -114,7 +112,7 @@ app.UseCors("FrontEndClient");
 
 seeder.Seed();
 
-// Configure the HTTP request pipeline.
+
 if (app.Environment.IsDevelopment())
 {
     app.UseDeveloperExceptionPage();
@@ -124,7 +122,6 @@ app.UseMiddleware<ErrorHandlingMiddleware>();
 
 app.UseAuthentication();
 
-// Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();

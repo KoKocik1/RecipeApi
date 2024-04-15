@@ -1,9 +1,12 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
+using RecipeApi.Authentication;
 using RecipeApi.Database;
 using RecipeApi.Exceptions;
 using RecipeApi.IService;
@@ -16,20 +19,28 @@ namespace RecipeApi.Service
         private readonly RecipeDbContext _dbContext;
         private readonly IMapper _mapper;
         private readonly ILogger _logger;
-        public RecipeService(RecipeDbContext context, IMapper mapper, ILogger<RecipeService> logger)
+        private readonly IUserContentService _userContentService;
+        private readonly IAuthorizationService _authorizationService;
+        public RecipeService(
+            RecipeDbContext context,
+            IMapper mapper,
+            ILogger<RecipeService> logger,
+            IUserContentService userContentService,
+            IAuthorizationService authorizationService)
         {
             _dbContext = context;
             _mapper = mapper;
             _logger = logger;
+            _userContentService = userContentService;
+            _authorizationService = authorizationService;
         }
         public int AddRecipe(CreateRecipeDto recipe)
         {
 
-            if(recipe is null) throw new BadRequestException("Empty recipe data");
+            if (recipe is null) throw new BadRequestException("Empty recipe data");
 
             var recipeEntity = _mapper.Map<Recipe>(recipe);
-            //TODO: temporary 
-            recipeEntity.UserId = 4;
+            recipeEntity.UserId = _userContentService.GetUserId;
             recipeEntity.CreatedAt = DateTime.Now.ToUniversalTime();
             _dbContext.Recipes.Add(recipeEntity);
             _dbContext.SaveChanges();
@@ -42,6 +53,9 @@ namespace RecipeApi.Service
             _logger.LogInformation($"Deleting recipe with id {id}");
             var recipe = _dbContext.Recipes.FirstOrDefault(r => r.Id == id);
             if (recipe is null) throw new NotFoundException("Recipe not found");
+
+            checkAuthorization(_userContentService.User, recipe);
+
             _dbContext.Recipes.Remove(recipe);
             _dbContext.SaveChanges();
         }
@@ -81,7 +95,7 @@ namespace RecipeApi.Service
             .Include(r => r.Instructions)
             .ToList();
 
-            if (recipes.Count==0) throw new NotFoundException("No recipes found for this author");
+            if (recipes.Count == 0) throw new NotFoundException("No recipes found for this author");
 
             return _mapper.Map<IEnumerable<RecipeDto>>(recipes);
         }
@@ -91,8 +105,12 @@ namespace RecipeApi.Service
             _logger.LogInformation($"Updating recipe with id {id}");
 
             if (recipe is null) throw new BadRequestException("Invalid recipe");
+
             var recipeEntity = _dbContext.Recipes.FirstOrDefault(r => r.Id == id);
             if (recipeEntity is null) throw new NotFoundException("Recipe not found");
+
+            checkAuthorization(_userContentService.User, recipeEntity);
+
             recipeEntity.Title = recipe.Title;
             recipeEntity.Description = recipe.Description;
             recipeEntity.Portions = recipe.Portions;
@@ -104,6 +122,15 @@ namespace RecipeApi.Service
 
             _dbContext.Recipes.Update(recipeEntity);
             _dbContext.SaveChanges();
+        }
+        private void checkAuthorization(ClaimsPrincipal user, Recipe recipe)
+        {
+            var authorizationResult = _authorizationService.AuthorizeAsync(user, recipe,
+                new SameAuthorRequirement()).Result;
+            if (!authorizationResult.Succeeded)
+            {
+                throw new ForbidException("You are not authorized to perform this action");
+            }
         }
     }
 }
