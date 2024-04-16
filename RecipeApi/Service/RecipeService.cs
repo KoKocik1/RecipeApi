@@ -56,7 +56,12 @@ namespace RecipeApi.Service
 
             checkAuthorization(_userContentService.User, recipe);
 
+            var recipeIngredients = _dbContext.RecipeIngredients.Where(ri => ri.RecipeId == id);
+            var recipeInstructions = _dbContext.RecipeInstructions.Where(ri => ri.RecipeId == recipe.Id);
+            
             _dbContext.Recipes.Remove(recipe);
+            _dbContext.RecipeIngredients.RemoveRange(recipeIngredients);
+            _dbContext.RecipeInstructions.RemoveRange(recipeInstructions);
             _dbContext.SaveChanges();
         }
 
