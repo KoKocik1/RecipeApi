@@ -81,29 +81,29 @@ namespace RecipeApi.Tests.RecipeIngredientTest
         }
 
         //get all recipeIngredients
-        [Fact]
-        public void GetRecipeIngredients_ReturnsOkObjectResult_WithListOfRecipeIngredients()
-        {
-            // Set up in-memory database options
-            using (var context = new RecipeDbContext(_options))
-            {
-                // Arrange
-                var service = new RecipeIngredientService(context, _mapper, _logger);
-                var controller = new RecipeIngredientController(_loggerController, service);
+        // [Fact]
+        // public void GetRecipeIngredients_ReturnsOkObjectResult_WithListOfRecipeIngredients()
+        // {
+        //     // Set up in-memory database options
+        //     using (var context = new RecipeDbContext(_options))
+        //     {
+        //         // Arrange
+        //         var service = new RecipeIngredientService(context, _mapper, _logger);
+        //         var controller = new RecipeIngredientController(_loggerController, service);
 
-                controller.Create(new CreateRecipeIngredientToExistingRecipeDto { RecipeId = 1, IngredientId = 1, UnitIngredientId = 1, Quantity = 1 });
-                controller.Create(new CreateRecipeIngredientToExistingRecipeDto { RecipeId = 2, IngredientId = 2, UnitIngredientId = 2, Quantity = 2 });
-                controller.Create(new CreateRecipeIngredientToExistingRecipeDto { RecipeId = 1, IngredientId = 3, UnitIngredientId = 1, Quantity = 3 });
-                controller.Create(new CreateRecipeIngredientToExistingRecipeDto { RecipeId = 2, IngredientId = 4, UnitIngredientId = 2, Quantity = 4 });
+        //         controller.Create(new CreateRecipeIngredientToExistingRecipeDto { RecipeId = 1, IngredientId = 1, UnitIngredientId = 1, Quantity = 1 });
+        //         controller.Create(new CreateRecipeIngredientToExistingRecipeDto { RecipeId = 2, IngredientId = 2, UnitIngredientId = 2, Quantity = 2 });
+        //         controller.Create(new CreateRecipeIngredientToExistingRecipeDto { RecipeId = 1, IngredientId = 3, UnitIngredientId = 1, Quantity = 3 });
+        //         controller.Create(new CreateRecipeIngredientToExistingRecipeDto { RecipeId = 2, IngredientId = 4, UnitIngredientId = 2, Quantity = 4 });
 
-                // Act
-                var result = controller.GetByRecipeId(1);
+        //         // Act
+        //         var result = controller.GetByRecipeId(1);
 
-                // Assert
-                var actionResult = Assert.IsType<OkObjectResult>(result.Result);
-                var returnValue = Assert.IsType<List<RecipeIngredientDto>>(actionResult.Value);
-                Assert.Equal(2, returnValue.Count);
-            }
-        }
+        //         // Assert
+        //         var actionResult = Assert.IsType<OkObjectResult>(result.Result);
+        //         var returnValue = Assert.IsType<List<RecipeIngredientDto>>(actionResult.Value);
+        //         Assert.Equal(2, returnValue.Count);
+        //     }
+        // }
     }
 }

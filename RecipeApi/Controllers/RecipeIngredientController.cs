@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using RecipeApi.IService;
@@ -12,6 +13,7 @@ namespace RecipeApi.Controllers
 {
     [Route("api/recipe-ingredient")]
     [ApiController]
+    [Authorize]
     public class RecipeIngredientController : Controller
     {
         private readonly ILogger<RecipeIngredientController> _logger;
@@ -24,6 +26,7 @@ namespace RecipeApi.Controllers
         }
 
         [HttpGet("recipe/{recipeId}")]
+        [AllowAnonymous]
         public ActionResult<IEnumerable<RecipeIngredientDto>> GetByRecipeId(int recipeId)
         {
                 var ingredients = _ingredientService.GetRecipeIngredients(recipeId);
@@ -31,6 +34,7 @@ namespace RecipeApi.Controllers
         }
 
         [HttpGet("{id}")]
+        [AllowAnonymous]
         public ActionResult<RecipeIngredientDto> GetById(int id)
         {
             var ingredient = _ingredientService.GetRecipeIngredient(id);
@@ -38,6 +42,7 @@ namespace RecipeApi.Controllers
         }
 
         [HttpPost]
+        [Authorize]
         public ActionResult Create([FromBody] CreateRecipeIngredientToExistingRecipeDto ingredient)
         {
             var id = _ingredientService.AddRecipeIngredient(ingredient);
@@ -45,6 +50,7 @@ namespace RecipeApi.Controllers
         }
 
         [HttpDelete("{id}")]
+        [Authorize]
         public ActionResult Delete(int id)
         {
             _ingredientService.DeleteRecipeIngredient(id);
@@ -52,6 +58,7 @@ namespace RecipeApi.Controllers
         }
 
         [HttpPut("{id}")]
+        [Authorize]
         public ActionResult Update(int id, [FromBody] UpdateRecipeIngredientDto ingredient)
         {
             _ingredientService.UpdateRecipeIngredient(id, ingredient);

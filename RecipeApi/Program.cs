@@ -82,7 +82,8 @@ builder.Services.AddScoped<IUserContentService, UserContentService>();
 
 builder.Services.AddScoped<IPasswordHasher<User>, PasswordHasher<User>>();
 builder.Services.AddScoped<IValidator<RegisterUserDto>, RegisterUserDtoValidator>();
-
+builder.Services.AddScoped<IValidator<UpdateRecipeIngredientDto>, UpdateRecipeIngredientDtoValidator>();
+builder.Services.AddScoped<IValidator<CreateRecipeIngredientToExistingRecipeDto>, CreateRecipeIngredientToExistingRecipeDtoValidator>();
 
 builder.Services.AddHttpContextAccessor();
 
