@@ -58,6 +58,15 @@ namespace RecipeApi.Service
             return _mapper.Map<IngredientDto>(ingredient);
         }
 
+        public IngredientDto GetIngredient(string name)
+        {
+            var ingredient = _dbContext.Ingredients.FirstOrDefault(i => i.Name == name);
+
+            if (ingredient is null) throw new NotFoundException("Ingredient not found");
+
+            return _mapper.Map<IngredientDto>(ingredient);
+        }
+
         public IEnumerable<IngredientDto> GetIngredients()
         {
             var ingredients = _dbContext.Ingredients.ToList();
