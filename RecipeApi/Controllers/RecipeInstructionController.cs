@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using RecipeApi.Database;
@@ -13,6 +14,7 @@ namespace RecipeApi.Controllers
 {
     [Route("api/recipe-instruction")]
     [ApiController]
+    [Authorize]
     public class RecipeInstructionController : ControllerBase
     {
         private readonly ILogger<RecipeInstructionController> _logger;
@@ -25,6 +27,7 @@ namespace RecipeApi.Controllers
         }
 
         [HttpGet("{id}")]
+        [AllowAnonymous]
         public ActionResult<RecipeInstruction> Get(int id)
         {
             var instruction = _instructionService.GetRecipeInstruction(id);
@@ -32,12 +35,14 @@ namespace RecipeApi.Controllers
         }
 
         [HttpGet("recipe/{recipeId}")]
+        [AllowAnonymous]
         public ActionResult<IEnumerable<RecipeInstruction>> GetInstructionsForRecipe(int recipeId)
         {
             var instructions = _instructionService.GetRecipeInstructionsByRecipeId(recipeId);
             return Ok(instructions);
         }
         [HttpPost]
+        [Authorize]
         public ActionResult Create([FromBody] CreateRecipeInstructionToExistingRecipeDto instruction)
         {
             var id = _instructionService.AddRecipeInstruction(instruction);
@@ -45,6 +50,7 @@ namespace RecipeApi.Controllers
         }
 
         [HttpPut("{id}")]
+        [Authorize]
         public ActionResult Update(int id, [FromBody] UpdateRecipeInstructionDto instruction)
         {
             _instructionService.UpdateRecipeInstruction(id, instruction);
@@ -52,6 +58,7 @@ namespace RecipeApi.Controllers
         }
 
         [HttpDelete("{id}")]
+        [Authorize]
         public ActionResult Delete(int id)
         {
             _instructionService.DeleteRecipeInstruction(id);
