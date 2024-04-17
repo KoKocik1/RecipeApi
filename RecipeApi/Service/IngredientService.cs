@@ -28,7 +28,8 @@ namespace RecipeApi.Service
         {
 
             //TODO: Move to validator
-            if(_dbContext.Ingredients.FirstOrDefault(r=>r.Name==ingredientDto.Name) is not null) throw new BadRequestException("Ingredient already exists");
+            if(_dbContext.Ingredients.FirstOrDefault(r=>r.Name==ingredientDto.Name) is not null)
+                throw new BadRequestException("Ingredient already exists");
             
             var ingredient = _mapper.Map<Ingredient>(ingredientDto);
             _dbContext.Ingredients.Add(ingredient);
@@ -43,7 +44,7 @@ namespace RecipeApi.Service
 
             var ingredient = _dbContext.Ingredients.FirstOrDefault(i => i.Id == id);
 
-            if (ingredient is null) throw new NotFoundException("Ingredient not found");
+            if (ingredient is null) throw new BadRequestException("Ingredient not found");
 
             _dbContext.Ingredients.Remove(ingredient);
             _dbContext.SaveChanges();

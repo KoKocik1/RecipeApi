@@ -4,6 +4,7 @@ using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using AutoMapper;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
 using RecipeApi.Authentication;
@@ -128,6 +129,8 @@ namespace RecipeApi.Service
             _dbContext.Recipes.Update(recipeEntity);
             _dbContext.SaveChanges();
         }
+
+        //check authorization of the user == author of the recipe
         private void checkAuthorization(ClaimsPrincipal user, Recipe recipe)
         {
             var authorizationResult = _authorizationService.AuthorizeAsync(user, recipe,
