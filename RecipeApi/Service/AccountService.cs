@@ -24,6 +24,7 @@ namespace RecipeApi.Service
         private readonly ILogger _logger;
         private readonly IPasswordHasher<User> _passwordHasher;
         private readonly AuthenticationSettings _authenticationSettings;
+       // private readonly UserManager<ApplicationUser> _userManager;
 
         public AccountService(RecipeDbContext dBContext,
             IMapper mapper,
@@ -80,15 +81,11 @@ namespace RecipeApi.Service
             var claims = new List<Claim>()
             {
                 new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
-                // new Claim(ClaimTypes.Name, $"{user.UserName}"),
+                new Claim(ClaimTypes.Name, $"{user.UserName}"),
                 new Claim(ClaimTypes.Role, $"{user.Role.Name}"),
                 new Claim("DateOfBirth", user.DateOfBirth.Value.ToString("yyyy-MM-dd")),
             };
 
-            // if (!string.IsNullOrEmpty(user.Nationality))
-            // {
-            //     claims.Add(new Claim("Nationality", user.Nationality));
-            // }
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_authenticationSettings.JwtKey));
             var cred = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
             var expires = DateTime.Now.AddDays(_authenticationSettings.JwtExpireDays);
