@@ -44,7 +44,7 @@ namespace RecipeApi.Service
 
             var ingredient = _dbContext.Ingredients.FirstOrDefault(i => i.Id == id);
 
-            if (ingredient is null) throw new BadRequestException("Ingredient not found");
+            if (ingredient is null) throw new NotFoundException("Ingredient not found");
 
             _dbContext.Ingredients.Remove(ingredient);
             _dbContext.SaveChanges();
