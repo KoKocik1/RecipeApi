@@ -32,12 +32,12 @@ namespace RecipeApi.Seeder
                     _dbContext.UnitIngredients.AddRange(units);
                     _dbContext.SaveChanges();
                 }
-                if (!_dbContext.Roles.Any())
-                {
-                    var roles = getRoles();
-                    _dbContext.Roles.AddRange(roles);
-                    _dbContext.SaveChanges();
-                }
+                // if (!_dbContext.Roles.Any())
+                // {
+                //     var roles = getRoles();
+                //     _dbContext.Roles.AddRange(roles);
+                //     _dbContext.SaveChanges();
+                // }
                 if (!_dbContext.Ingredients.Any())
                 {
                     var ingredients = getIngredients();
@@ -46,22 +46,22 @@ namespace RecipeApi.Seeder
                 }
             }
         }
-        private IEnumerable<Role> getRoles()
-        {
-            var roles = new List<Role>()
-            {
-                new Role(){
-                    Name="User"
-                },
-                new Role(){
-                    Name="Manager"
-                },
-                new Role(){
-                    Name="Admin"
-                }
-            };
-            return roles;
-        }
+        // private IEnumerable<Role> getRoles()
+        // {
+        //     var roles = new List<Role>()
+        //     {
+        //         new Role(){
+        //             Name="User"
+        //         },
+        //         new Role(){
+        //             Name="Manager"
+        //         },
+        //         new Role(){
+        //             Name="Admin"
+        //         }
+        //     };
+        //     return roles;
+        // }
         private IEnumerable<UnitIngredient> getUnits()
         {
             var units = new List<UnitIngredient>()

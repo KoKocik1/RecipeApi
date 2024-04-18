@@ -3,10 +3,12 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Identity.Data;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using RecipeApi.IService;
 using RecipeApi.Models;
+using RecipeApi.Models.User;
 
 namespace RecipeApi.Controllers
 {
@@ -24,16 +26,27 @@ namespace RecipeApi.Controllers
             _logger = logger;
         }
         [HttpPost("register")]
-        public ActionResult RegisterAccount([FromBody] RegisterUserDto dto)
+        public async Task<ActionResult> RegisterAccount([FromBody] RegisterUserDto dto)
         {
-            _acconntService.RegisterUser(dto);
+            await _acconntService.RegisterUserAsync(dto);
             return Ok();
         }
         [HttpPost]
-        public ActionResult Login([FromBody] LoginDto dto)
+        public async Task<ActionResult> Login([FromBody] LoginDto dto)
         {
-            string token = _acconntService.GenerateJwt(dto);
-            return Ok(token);
+            LoginResult result = await _acconntService.LoginUserAsync(dto);
+            return Ok(new
+            {
+                access_token = result.Token,
+                expires_at = result.Expires_at
+            });
+        }
+
+        [HttpGet("confirmEmail")]
+        public async Task<ActionResult> ConfirmEmail([FromQuery] string userId, [FromQuery] string token)
+        {
+            await _acconntService.ConfirmEmailAsync(userId, token);
+            return Ok();
         }
     }
 }

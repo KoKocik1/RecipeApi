@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using RecipeApi.Authentication;
 using RecipeApi.Database;
@@ -20,20 +21,21 @@ namespace RecipeApi.Service
         private readonly RecipeDbContext _dbContext;
         private readonly IMapper _mapper;
         private readonly ILogger _logger;
-        private readonly IUserContentService _userContentService;
         private readonly IAuthorizationService _authorizationService;
+        private readonly UserManager<IdentityUser> _userManager;
         public RecipeService(
             RecipeDbContext context,
             IMapper mapper,
             ILogger<RecipeService> logger,
             IUserContentService userContentService,
-            IAuthorizationService authorizationService)
+            IAuthorizationService authorizationService,
+            UserManager<IdentityUser> userManager)
         {
             _dbContext = context;
             _mapper = mapper;
             _logger = logger;
-            _userContentService = userContentService;
             _authorizationService = authorizationService;
+            _userManager = userManager;
         }
         public int AddRecipe(CreateRecipeDto recipe)
         {
@@ -41,7 +43,7 @@ namespace RecipeApi.Service
             if (recipe is null) throw new BadRequestException("Empty recipe data");
 
             var recipeEntity = _mapper.Map<Recipe>(recipe);
-            recipeEntity.UserId = _userContentService.GetUserId;
+            recipeEntity.UserId = "99";
             recipeEntity.CreatedAt = DateTime.Now.ToUniversalTime();
             _dbContext.Recipes.Add(recipeEntity);
             _dbContext.SaveChanges();
@@ -55,7 +57,7 @@ namespace RecipeApi.Service
             var recipe = _dbContext.Recipes.FirstOrDefault(r => r.Id == id);
             if (recipe is null) throw new NotFoundException("Recipe not found");
 
-            checkAuthorization(_userContentService.User, recipe);
+            //checkAuthorization(_userContentService.User, recipe);
 
             var recipeIngredients = _dbContext.RecipeIngredients.Where(ri => ri.RecipeId == id);
             var recipeInstructions = _dbContext.RecipeInstructions.Where(ri => ri.RecipeId == recipe.Id);
@@ -93,7 +95,7 @@ namespace RecipeApi.Service
             return _mapper.Map<IEnumerable<RecipeDto>>(recipes);
         }
 
-        public IEnumerable<RecipeDto> GetRecipesByAuthor(int authorId)
+        public IEnumerable<RecipeDto> GetRecipesByAuthor(string authorId)
         {
             var recipes = _dbContext.Recipes.Where(r => r.UserId == authorId)
             .Include(r => r.User)
@@ -115,7 +117,7 @@ namespace RecipeApi.Service
             var recipeEntity = _dbContext.Recipes.FirstOrDefault(r => r.Id == id);
             if (recipeEntity is null) throw new NotFoundException("Recipe not found");
 
-            checkAuthorization(_userContentService.User, recipeEntity);
+            //checkAuthorization(_userContentService.User, recipeEntity);
 
             recipeEntity.Title = recipe.Title;
             recipeEntity.Description = recipe.Description;

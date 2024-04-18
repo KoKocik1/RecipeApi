@@ -1,6 +1,5 @@
 ﻿using RecipeApi.Database;
 using Microsoft.EntityFrameworkCore;
-using NLog.Web;
 using System.Reflection;
 using RecipeApi.Seeder;
 using RecipeApi.IService;
@@ -21,7 +20,7 @@ var builder = WebApplication.CreateBuilder(args);
 // Nlog
 builder.Logging.ClearProviders();
 builder.Logging.SetMinimumLevel(Microsoft.Extensions.Logging.LogLevel.Trace);
-builder.Host.UseNLog();
+//builder.Host.UseNLog();
 
 // authentication
 var authenticationSettings = new AuthenticationSettings();
@@ -59,6 +58,32 @@ builder.Services.AddDbContext<RecipeDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"));
 });
 
+builder.Services.AddIdentity<IdentityUser, IdentityRole>(options=>{
+    options.User.RequireUniqueEmail = true;
+    options.User.AllowedUserNameCharacters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._@+";
+    options.Password.RequireDigit = true;
+    options.Password.RequireLowercase = true;
+    options.Password.RequireUppercase = true;
+    options.Password.RequiredLength = 8;
+    options.Password.RequireNonAlphanumeric = true;
+    options.SignIn.RequireConfirmedEmail = true;
+    options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(15);
+    options.Lockout.MaxFailedAccessAttempts = 5;
+
+})
+    .AddEntityFrameworkStores<RecipeDbContext>()
+    .AddDefaultTokenProviders();
+
+builder.Services.ConfigureApplicationCookie(options =>
+{
+    options.LoginPath = "/Account/Login";
+    options.AccessDeniedPath = "/Account/AccessDenied";
+    options.LogoutPath = "/Account/Logout";
+    options.Cookie.Name = "Identity.Cookie";
+    options.SlidingExpiration = true;
+    options.ExpireTimeSpan = TimeSpan.FromMinutes(60);
+});
+
 // Mapper
 builder.Services.AddAutoMapper(Assembly.GetExecutingAssembly());
 // builder.Services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
@@ -66,6 +91,8 @@ builder.Services.AddAutoMapper(Assembly.GetExecutingAssembly());
 
 builder.Services.AddControllers().AddFluentValidation();
 //builder.Services.AddFluentValidationAutoValidation().AddFluentValidationClientsideAdapters();
+
+builder.Services.AddAuthorizationBuilder(); //TODO: new
 
 builder.Services.AddScoped<ErrorHandlingMiddleware>();
 
@@ -80,9 +107,12 @@ builder.Services.AddScoped<IUnitIngredientService, UnitIngredientService>();
 builder.Services.AddScoped<IRecipeService, RecipeService>();
 builder.Services.AddScoped<IUserContentService, UserContentService>();
 
-builder.Services.AddScoped<IPasswordHasher<User>, PasswordHasher<User>>();
+//builder.Services.AddScoped<IPasswordHasher<User>, PasswordHasher<User>>();
 builder.Services.AddScoped<IValidator<RegisterUserDto>, RegisterUserDtoValidator>();
 
+// builder.Services
+//     .AddIdentityApiEndpoints<User>()
+//     .AddEntityFrameworkStores<RecipeDbContext>();
 
 builder.Services.AddHttpContextAccessor();
 
@@ -94,9 +124,10 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("FrontEndClient", policyBuilder =>
 
-        policyBuilder.AllowAnyMethod()
+        policyBuilder
+        .AllowAnyOrigin()
+        .AllowAnyMethod()
         .AllowAnyHeader()
-        .WithOrigins(builder.Configuration["AllowedOrigins"])
     );
 });
 
@@ -109,7 +140,6 @@ var seeder = scope.ServiceProvider.GetRequiredService<RecipeSeeder>();
 app.UseResponseCaching();
 app.UseStaticFiles();
 app.UseCors("FrontEndClient");
-
 seeder.Seed();
 
 

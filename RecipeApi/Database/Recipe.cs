@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations.Schema;
+using Microsoft.AspNetCore.Identity;
 using RecipeApi.Database;
 
 namespace RecipeApi.Database
@@ -16,7 +17,7 @@ namespace RecipeApi.Database
         public DateTime CreatedAt { get; set; }
         public DateTime? UpdatedAt { get; set; }
 
-        public int? UserId { get; set; }
-        public virtual User User { get; set; }
+        public string UserId { get; set; }
+        public virtual IdentityUser User { get; set; }
     }
 }

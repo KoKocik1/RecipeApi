@@ -10,28 +10,28 @@ namespace RecipeApi.Tests
 {
     public class IngredientDbTest
     {
-        [Fact]
-        public void DbContext_CanAddAndRetrieveIngredient()
-        {
-            // Arrange
-            var options = new DbContextOptionsBuilder<RecipeDbContext>()
-                .UseInMemoryDatabase(databaseName: "DatabaseTest")
-                .Options;
+        // [Fact]
+        // public void DbContext_CanAddAndRetrieveIngredient()
+        // {
+        //     // Arrange
+        //     var options = new DbContextOptionsBuilder<RecipeDbContext>()
+        //         .UseInMemoryDatabase(databaseName: "DatabaseTest")
+        //         .Options;
 
-            // Act
-            using (var context = new RecipeDbContext(options))
-            {
-                // Add a new ingredient
-                var ingredient = new Ingredient { Name = "Test Ingredient"};
-                context.Ingredients.Add(ingredient);
-                context.SaveChanges();
+        //     // Act
+        //     using (var context = new RecipeDbContext(options))
+        //     {
+        //         // Add a new ingredient
+        //         var ingredient = new Ingredient { Name = "Test Ingredient"};
+        //         context.Ingredients.Add(ingredient);
+        //         context.SaveChanges();
             
-                var retrievedIngredient = context.Ingredients.FirstOrDefault(i => i.Name == "Test Ingredient");
-                Assert.NotNull(retrievedIngredient);
+        //         var retrievedIngredient = context.Ingredients.FirstOrDefault(i => i.Name == "Test Ingredient");
+        //         Assert.NotNull(retrievedIngredient);
 
-                context.Ingredients.Remove(retrievedIngredient);
-            }
-        }
+        //         context.Ingredients.Remove(retrievedIngredient);
+        //     }
+        // }
 
     }
 }

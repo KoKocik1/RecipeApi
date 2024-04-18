@@ -42,7 +42,7 @@ namespace RecipeApi.Controllers
 
         [HttpGet("author/{authorId}")]
         [AllowAnonymous]
-        public ActionResult<IEnumerable<RecipeDto>> GetRecipesByAuthor(int authorId)
+        public ActionResult<IEnumerable<RecipeDto>> GetRecipesByAuthor(string authorId)
         {
             var recipes = _recipeService.GetRecipesByAuthor(authorId);
             return Ok(recipes);

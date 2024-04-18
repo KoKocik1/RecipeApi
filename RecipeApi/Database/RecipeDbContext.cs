@@ -1,8 +1,9 @@
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 
 namespace RecipeApi.Database
 {
-    public class RecipeDbContext : DbContext
+    public class RecipeDbContext : IdentityDbContext
     {
         public RecipeDbContext(DbContextOptions<RecipeDbContext> options) : base(options)
         {
@@ -13,15 +14,13 @@ namespace RecipeApi.Database
         public DbSet<RecipeIngredient> RecipeIngredients { get; set; }
         public DbSet<RecipeInstruction> RecipeInstructions { get; set; }
         public DbSet<UnitIngredient> UnitIngredients { get; set; }
-        public DbSet<Role> Roles { get; set; }
-        public DbSet<User> Users { get; set; }
+        public DbSet<UserDetails> UsersDetails { get; set; }
 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<Recipe>()
-                .Property(r => r.Title)
-                .IsRequired();          
+            base.OnModelCreating(modelBuilder);
+
         }
 
     }

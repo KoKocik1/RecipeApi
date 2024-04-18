@@ -10,7 +10,7 @@ namespace RecipeApi.IService
     {
         RecipeDetailsDto GetRecipe(int id);
         IEnumerable<RecipeDto> GetRecipes();
-        IEnumerable<RecipeDto> GetRecipesByAuthor(int authorId);
+        IEnumerable<RecipeDto> GetRecipesByAuthor(string authorId);
         int AddRecipe(CreateRecipeDto recipe);
         void UpdateRecipe(int id, UpdateRecipeDto recipe);
         void DeleteRecipe(int id);

@@ -3,12 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using RecipeApi.Models;
+using RecipeApi.Models.User;
 
 namespace RecipeApi.IService
 {
     public interface IAccountService
     {
-        void RegisterUser(RegisterUserDto dto);
-        string GenerateJwt(LoginDto dto);
+        Task RegisterUserAsync(RegisterUserDto dto);
+        Task<LoginResult> LoginUserAsync(LoginDto dto);
+        Task ConfirmEmailAsync(string userId, string token);
     }
 }

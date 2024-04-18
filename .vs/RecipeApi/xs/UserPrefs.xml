@@ -9,19 +9,17 @@
   <MonoDevelop.Ide.Workbench ActiveDocument="RecipeApi/Service/IngredientService.cs">
     <Files>
       <File FileName="RecipeApi.Tests/TestDbContextBase.cs" />
-      <File FileName="RecipeApi/Database/RecipeDbContext.cs" Line="13" Column="33" />
-      <File FileName="RecipeApi/Service/IngredientService.cs" Line="30" Column="52" />
+      <File FileName="RecipeApi/Database/RecipeDbContext.cs" />
+      <File FileName="RecipeApi/Service/IngredientService.cs" Line="6" Column="42" />
     </Files>
     <Pads>
       <Pad Id="ProjectPad">
         <State name="__root__">
           <Node name="RecipeApi" expanded="True">
-            <Node name="RecipeApi">
-              <Node name="Database" expanded="True" />
-              <Node name="Service" expanded="True">
-                <Node name="IngredientService.cs" selected="True" />
-              </Node>
+            <Node name="RecipeApi" expanded="True">
+              <Node name="Service" expanded="True" />
             </Node>
+            <Node name="RecipeApi.Tests" expanded="True" />
           </Node>
         </State>
       </Pad>

@@ -23,7 +23,7 @@ namespace RecipeApi.Authentication
             var userId = context.User.FindFirst(c => c.Type == ClaimTypes.NameIdentifier).Value;
 
             // Check if the user is the author of the recipe
-            if (recipe.UserId == int.Parse(userId))
+            if (recipe.UserId == userId)
             {
                 context.Succeed(requirement);
             }

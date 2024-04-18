@@ -24,9 +24,9 @@ namespace RecipeApi.Mapping
                 .ForMember(dest => dest.Verified, opt => opt.MapFrom(src => src.Ingredient.Verified))
                 .ForMember(dest => dest.Type, opt => opt.MapFrom(src => src.UnitIngredient.Type))
                 .ForMember(dest => dest.UnitIngredientId, opt => opt.MapFrom(src => src.UnitIngredient.Id));
-            CreateMap<User, RecipeAuthorDto>();
-            CreateMap<User, UserPrivateDto>();
-            CreateMap<User, UserPublicDto>();
+            // CreateMap<User, RecipeAuthorDto>();
+            // CreateMap<User, UserPrivateDto>();
+            // CreateMap<User, UserPublicDto>();
 
 
             //Dto to database model
