@@ -27,7 +27,6 @@ namespace RecipeApi.Service
             RecipeDbContext context,
             IMapper mapper,
             ILogger<RecipeService> logger,
-            IUserContentService userContentService,
             IAuthorizationService authorizationService,
             UserManager<IdentityUser> userManager)
         {

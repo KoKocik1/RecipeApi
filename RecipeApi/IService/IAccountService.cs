@@ -11,6 +11,7 @@ namespace RecipeApi.IService
     {
         Task RegisterUserAsync(RegisterUserDto dto);
         Task<LoginResult> LoginUserAsync(LoginDto dto);
-        Task ConfirmEmailAsync(string userId, string token);
+        Task<string> ConfirmEmailAsync(string userId, string token);
+        Task SingOutAsync();
     }
 }

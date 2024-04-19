@@ -7,6 +7,7 @@ using System.Net.Mail;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
+using System.Web;
 using AutoMapper;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Identity;
@@ -31,8 +32,8 @@ namespace RecipeApi.Service
         private readonly IMapper _mapper;
         private readonly ILogger _logger;
         private readonly AuthenticationSettings _authenticationSettings;
-        private readonly IConfiguration _configuration;
 
+        private readonly IEmailService _emailService;
         private readonly UserManager<IdentityUser> _userManager;
         private readonly SignInManager<IdentityUser> _signInManager;
 
@@ -42,7 +43,7 @@ namespace RecipeApi.Service
             AuthenticationSettings authenticationSettings,
             UserManager<IdentityUser> userManager,
             SignInManager<IdentityUser> signInManager,
-            IConfiguration configuration)
+            IEmailService emailService)
         {
             _dbContext = dBContext;
             _mapper = mapper;
@@ -50,7 +51,7 @@ namespace RecipeApi.Service
             _authenticationSettings = authenticationSettings;
             _userManager = userManager;
             _signInManager = signInManager;
-            _configuration = configuration;
+            _emailService = emailService;
         }
         public async Task RegisterUserAsync(RegisterUserDto dto)
         {
@@ -67,27 +68,18 @@ namespace RecipeApi.Service
             if (result.Succeeded)
             {
                 var confirmationToken = await _userManager.GenerateEmailConfirmationTokenAsync(newUser);
-                byte[] decodedBytes = Convert.FromBase64String(confirmationToken);
-                Console.WriteLine(confirmationToken);
-                var confirmationTokenLink = new Uri($"http://localhost:5284/api/account/confirmEmail?userId={newUser.Id}&token={Uri.EscapeDataString(confirmationToken)}");
 
-                //recipeapiconfirm@gmail.com
-                var message = new MailMessage(
-                    from: "recipeapiconfirm@gmail.com",
-                    to: newUser.Email,
-                    "Please confirm your email",
-                    $"Click <a href='{confirmationTokenLink}'>here</a> to confirm your email");
+                var userIdEncoded = HttpUtility.UrlEncode(newUser.Id);
+                var tokenEncoded = HttpUtility.UrlEncode(confirmationToken);
+                var confirmationTokenLink = new Uri($"http://localhost:5284/api/account/confirmEmail?userId={userIdEncoded}&token={tokenEncoded}");
 
-
-                using (var emailClient = new SmtpClient("smtp-relay.brevo.com", 587))
-                {
-                    emailClient.EnableSsl = true;
-                    emailClient.UseDefaultCredentials = false;
-                    emailClient.Credentials = new NetworkCredential(
+                await _emailService.SendAsync(
                     "recipeapiconfirm@gmail.com",
-                    _configuration["Identity:EmailConfirmationKey"]);
-                    await emailClient.SendMailAsync(message);
-                }
+                    newUser.Email,
+                    "Confirm your email",
+                    $"Click <a href=\"{confirmationTokenLink}\">here</a> to confirm your email");
+
+                
             }
             else
             {
@@ -125,7 +117,7 @@ namespace RecipeApi.Service
                 new Claim(ClaimTypes.NameIdentifier, user.Id),
                 new Claim(ClaimTypes.Name, $"{user.UserName}"),
                 //new Claim(ClaimTypes.Role, $"{user.Role.Name}"),
-                new Claim("DateOfBirth", userDetails.DateOfBirth.Value.ToString("yyyy-MM-dd")),
+                // new Claim("DateOfBirth", userDetails.DateOfBirth.Value.ToString("yyyy-MM-dd")),
             };
 
             var expires = DateTime.Now.AddMinutes(10);
@@ -137,8 +129,9 @@ namespace RecipeApi.Service
             };
         }
 
-        public async Task ConfirmEmailAsync(string userId, string token)
+        public async Task<string> ConfirmEmailAsync(string userId, string token)
         {
+
             var user = await _userManager.FindByIdAsync(userId);
             if (user is null) throw new BadRequestException("User not found");
 
@@ -148,8 +141,14 @@ namespace RecipeApi.Service
                 var errors = result.Errors.Select(e => e.Description);
                 throw new BadRequestException($"Email confirmation failed: {string.Join(", ", errors)}");
             }
+
+            return "Email confirmed";
         }
 
+        public async Task SingOutAsync()
+        {
+            await _signInManager.SignOutAsync();
+        }
         private string CreateToken(IEnumerable<Claim> claims, DateTime expires)
         {
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_authenticationSettings.JwtKey));

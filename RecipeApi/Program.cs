@@ -14,6 +14,7 @@ using RecipeApi.Models;
 using RecipeApi.Validators;
 using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Authorization;
+using RecipeApi.Settings;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -84,6 +85,9 @@ builder.Services.ConfigureApplicationCookie(options =>
     options.ExpireTimeSpan = TimeSpan.FromMinutes(60);
 });
 
+
+builder.Services.Configure<SmtpSetting>(builder.Configuration.GetSection("SMTP"));
+
 // Mapper
 builder.Services.AddAutoMapper(Assembly.GetExecutingAssembly());
 // builder.Services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
@@ -105,10 +109,11 @@ builder.Services.AddScoped<IRecipeInstructionService, RecipeInstructionService>(
 builder.Services.AddScoped<IRecipeIngredientService, RecipeIngredientService>();
 builder.Services.AddScoped<IUnitIngredientService, UnitIngredientService>();
 builder.Services.AddScoped<IRecipeService, RecipeService>();
-builder.Services.AddScoped<IUserContentService, UserContentService>();
 
-//builder.Services.AddScoped<IPasswordHasher<User>, PasswordHasher<User>>();
+builder.Services.AddSingleton<IEmailService, EmailService>();
+
 builder.Services.AddScoped<IValidator<RegisterUserDto>, RegisterUserDtoValidator>();
+
 
 // builder.Services
 //     .AddIdentityApiEndpoints<User>()
@@ -130,6 +135,8 @@ builder.Services.AddCors(options =>
         .AllowAnyHeader()
     );
 });
+
+
 
 var app = builder.Build();
 

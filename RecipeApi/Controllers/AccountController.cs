@@ -45,7 +45,14 @@ namespace RecipeApi.Controllers
         [HttpGet("confirmEmail")]
         public async Task<ActionResult> ConfirmEmail([FromQuery] string userId, [FromQuery] string token)
         {
-            await _acconntService.ConfirmEmailAsync(userId, token);
+            var resutl=await _acconntService.ConfirmEmailAsync(userId, token);
+            return Ok(resutl);
+        }
+
+        [HttpPost("signOut")]
+        public async Task<ActionResult> SignOut()
+        {
+            await _acconntService.SingOutAsync();
             return Ok();
         }
     }
