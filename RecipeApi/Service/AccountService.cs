@@ -2,18 +2,28 @@ using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
+using System.Net;
+using System.Net.Mail;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
+using System.Web;
 using AutoMapper;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.UI.Services;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration.UserSecrets;
 using Microsoft.IdentityModel.Tokens;
 using RecipeApi.Authentication;
 using RecipeApi.Database;
 using RecipeApi.Exceptions;
 using RecipeApi.IService;
 using RecipeApi.Models;
+using RecipeApi.Models.User;
+using RecipeApi.Tools;
+
 
 namespace RecipeApi.Service
 {
@@ -22,81 +32,140 @@ namespace RecipeApi.Service
         private readonly RecipeDbContext _dbContext;
         private readonly IMapper _mapper;
         private readonly ILogger _logger;
-        private readonly IPasswordHasher<User> _passwordHasher;
         private readonly AuthenticationSettings _authenticationSettings;
+
+        private readonly IEmailService _emailService;
+        private readonly UserManager<ApplicationUser> _userManager;
+        private readonly SignInManager<ApplicationUser> _signInManager;
+        private readonly ITokenHelper _tokenHelper;
 
         public AccountService(RecipeDbContext dBContext,
             IMapper mapper,
             ILogger<AccountService> logger,
-            IPasswordHasher<User> passwordHasher,
-            AuthenticationSettings authenticationSettings)
+            AuthenticationSettings authenticationSettings,
+            UserManager<ApplicationUser> userManager,
+            SignInManager<ApplicationUser> signInManager,
+            IEmailService emailService,
+            ITokenHelper tokenHelper)
         {
             _dbContext = dBContext;
             _mapper = mapper;
             _logger = logger;
-            _passwordHasher = passwordHasher;
             _authenticationSettings = authenticationSettings;
+            _userManager = userManager;
+            _signInManager = signInManager;
+            _emailService = emailService;
+            _tokenHelper = tokenHelper;
+        }
+        public async Task RegisterUserAsync(RegisterUserDto dto)
+        {
+            if (dto is null) throw new BadRequestException("Empty user data");
+
+            var newUser = _mapper.Map<ApplicationUser>(dto);
+
+            //var claimDateOfBirth = new Claim("DateOfBirth", newUser.DateOfBirth.Value.ToString("yyyy-MM-dd"));
+            var claimRole = new Claim(ClaimTypes.Role, "User");
+
+            var result = await _userManager.CreateAsync(newUser, dto.Password);
+
+            if (result.Succeeded)
+            {
+
+                await _userManager.AddClaimAsync(newUser, claimRole);
+
+                var confirmationToken = await _userManager.GenerateEmailConfirmationTokenAsync(newUser);
+
+                var userIdEncoded = HttpUtility.UrlEncode(newUser.Id);
+                var tokenEncoded = HttpUtility.UrlEncode(confirmationToken);
+                var confirmationTokenLink = new Uri($"http://localhost:5284/api/account/confirmEmail?userId={userIdEncoded}&token={tokenEncoded}");
+
+                await _emailService.SendAsync(
+                    "recipeapiconfirm@gmail.com",
+                    newUser.Email,
+                    "Confirm your email",
+                    $"Click <a href=\"{confirmationTokenLink}\">here</a> to confirm your email");
+            }
+            else
+            {
+                var errors = result.Errors.Select(e => e.Description);
+                throw new BadRequestException($"User registration failed: {string.Join(", ", errors)}");
+            }
         }
 
-        public void RegisterUser(RegisterUserDto dto)
+        public async Task<TokenData> LoginUserAsync(LoginDto dto)
         {
-            if(dto is null) throw new BadRequestException("Empty user data");
 
-            var newUser = new User()
-            {
-                FirstName = dto.FirstName,
-                LastName = dto.LastName,
-                UserName = dto.UserName,
-                Email = dto.Email,
-                DateOfBirth = dto.DateOfBirth,
-                Nationality = dto.Nationality,
-                RoleId = 1
-            };
-            var hashedPassword = _passwordHasher.HashPassword(newUser, dto.Password);
-            newUser.PasswordHash = hashedPassword;
-            _dbContext.Users.Add(newUser);
-            _dbContext.SaveChanges();
-        }
+            var user = await _userManager.FindByEmailAsync(dto.Email);
+            if (user is null) throw new BadRequestException("Invalid username or password");
 
-        public string GenerateJwt(LoginDto dto)
-        {
-            var user = _dbContext
-                .Users
-                .Include(u => u.Role)
-                .FirstOrDefault(u => u.Email == dto.Email);
-                
-            if (user is null)
+            var result = await _signInManager.PasswordSignInAsync(
+                user.UserName,
+                dto.Password,
+                false,
+                false);
+
+            if (!result.Succeeded)
             {
+                if (result.IsLockedOut)
+                {
+                    throw new BadRequestException("User account locked out");
+                }
+
                 throw new BadRequestException("Invalid username or password");
             }
 
-            var result = _passwordHasher.VerifyHashedPassword(user, user.PasswordHash, dto.Password);
+            List<string> userRoles = (List<string>)await _userManager.GetRolesAsync(user);
 
-            if (result == PasswordVerificationResult.Failed)
-            {
-                throw new BadRequestException("Invalid username or password");
-            }
+            TokenData tokenData = _tokenHelper.GenerateJwtToken(user, userRoles, _signInManager);
+            return tokenData;
 
-            var claims = new List<Claim>()
-            {
-                new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
-                // new Claim(ClaimTypes.Name, $"{user.UserName}"),
-                new Claim(ClaimTypes.Role, $"{user.Role.Name}"),
-                new Claim("DateOfBirth", user.DateOfBirth.Value.ToString("yyyy-MM-dd")),
-            };
-
-            // if (!string.IsNullOrEmpty(user.Nationality))
+            // var claims = new List<Claim>()
             // {
-            //     claims.Add(new Claim("Nationality", user.Nationality));
-            // }
+            //     new Claim(ClaimTypes.NameIdentifier, user.Id),
+            //     new Claim(ClaimTypes.Name, $"{user.UserName}"),
+            //     //new Claim(ClaimTypes.Role, $"{user.Role.Name}"),
+            //     new Claim("DateOfBirth", user.DateOfBirth.Value.ToString("yyyy-MM-dd")),
+            // };
+
+            // var expires = DateTime.Now.AddMinutes(1);
+
+            // return new LoginResult
+            // {
+            //     Token = CreateToken(claims, expires),
+            //     Expires_at = expires.ToString()
+            // };
+        }
+
+        public async Task<string> ConfirmEmailAsync(string userId, string token)
+        {
+
+            var user = await _userManager.FindByIdAsync(userId);
+            if (user is null) throw new BadRequestException("User not found");
+
+            var result = await _userManager.ConfirmEmailAsync(user, token);
+            if (!result.Succeeded)
+            {
+                var errors = result.Errors.Select(e => e.Description);
+                throw new BadRequestException($"Email confirmation failed: {string.Join(", ", errors)}");
+            }
+
+            return "Email confirmed";
+        }
+
+        public async Task SingOutAsync()
+        {
+            await _signInManager.SignOutAsync();
+        }
+
+        private string CreateToken(IEnumerable<Claim> claims, DateTime expires)
+        {
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_authenticationSettings.JwtKey));
-            var cred = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
-            var expires = DateTime.Now.AddDays(_authenticationSettings.JwtExpireDays);
+            var cred = new SigningCredentials(key, SecurityAlgorithms.HmacSha256Signature);
 
             var token = new JwtSecurityToken(_authenticationSettings.JwtIssuer,
                 _authenticationSettings.JwtIssuer,
                 claims,
-                expires: expires,
+                expires,
                 signingCredentials: cred);
 
             var tokenHandler = new JwtSecurityTokenHandler();

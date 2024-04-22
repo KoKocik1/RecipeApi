@@ -4,7 +4,9 @@ using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using AutoMapper;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using RecipeApi.Authentication;
 using RecipeApi.Database;
@@ -19,28 +21,28 @@ namespace RecipeApi.Service
         private readonly RecipeDbContext _dbContext;
         private readonly IMapper _mapper;
         private readonly ILogger _logger;
-        private readonly IUserContentService _userContentService;
         private readonly IAuthorizationService _authorizationService;
+        private readonly UserManager<ApplicationUser> _userManager;
         public RecipeService(
             RecipeDbContext context,
             IMapper mapper,
             ILogger<RecipeService> logger,
-            IUserContentService userContentService,
-            IAuthorizationService authorizationService)
+            IAuthorizationService authorizationService,
+            UserManager<ApplicationUser> userManager)
         {
             _dbContext = context;
             _mapper = mapper;
             _logger = logger;
-            _userContentService = userContentService;
             _authorizationService = authorizationService;
+            _userManager = userManager;
         }
-        public int AddRecipe(CreateRecipeDto recipe)
+        public int AddRecipe(CreateRecipeDto recipe, string userId)
         {
 
             if (recipe is null) throw new BadRequestException("Empty recipe data");
 
             var recipeEntity = _mapper.Map<Recipe>(recipe);
-            recipeEntity.UserId = _userContentService.GetUserId;
+            recipeEntity.UserId = userId;
             recipeEntity.CreatedAt = DateTime.Now.ToUniversalTime();
             _dbContext.Recipes.Add(recipeEntity);
             _dbContext.SaveChanges();
@@ -48,13 +50,13 @@ namespace RecipeApi.Service
             return recipeEntity.Id;
         }
 
-        public void DeleteRecipe(int id)
+        public void DeleteRecipe(int id, string userId)
         {
             _logger.LogInformation($"Deleting recipe with id {id}");
             var recipe = _dbContext.Recipes.FirstOrDefault(r => r.Id == id);
             if (recipe is null) throw new NotFoundException("Recipe not found");
 
-            checkAuthorization(_userContentService.User, recipe);
+            if(userId!=recipe.UserId) throw new ForbidException("You are not authorized to perform this action");
 
             var recipeIngredients = _dbContext.RecipeIngredients.Where(ri => ri.RecipeId == id);
             var recipeInstructions = _dbContext.RecipeInstructions.Where(ri => ri.RecipeId == recipe.Id);
@@ -92,7 +94,7 @@ namespace RecipeApi.Service
             return _mapper.Map<IEnumerable<RecipeDto>>(recipes);
         }
 
-        public IEnumerable<RecipeDto> GetRecipesByAuthor(int authorId)
+        public IEnumerable<RecipeDto> GetRecipesByAuthor(string authorId)
         {
             var recipes = _dbContext.Recipes.Where(r => r.UserId == authorId)
             .Include(r => r.User)
@@ -105,7 +107,7 @@ namespace RecipeApi.Service
             return _mapper.Map<IEnumerable<RecipeDto>>(recipes);
         }
 
-        public void UpdateRecipe(int id, UpdateRecipeDto recipe)
+        public void UpdateRecipe(int id, UpdateRecipeDto recipe, string userId)
         {
             _logger.LogInformation($"Updating recipe with id {id}");
 
@@ -114,7 +116,8 @@ namespace RecipeApi.Service
             var recipeEntity = _dbContext.Recipes.FirstOrDefault(r => r.Id == id);
             if (recipeEntity is null) throw new NotFoundException("Recipe not found");
 
-            checkAuthorization(_userContentService.User, recipeEntity);
+            if(userId!=recipeEntity.UserId) throw new ForbidException("You are not authorized to perform this action");
+            
 
             recipeEntity.Title = recipe.Title;
             recipeEntity.Description = recipe.Description;
@@ -127,15 +130,6 @@ namespace RecipeApi.Service
 
             _dbContext.Recipes.Update(recipeEntity);
             _dbContext.SaveChanges();
-        }
-        private void checkAuthorization(ClaimsPrincipal user, Recipe recipe)
-        {
-            var authorizationResult = _authorizationService.AuthorizeAsync(user, recipe,
-                new SameAuthorRequirement()).Result;
-            if (!authorizationResult.Succeeded)
-            {
-                throw new ForbidException("You are not authorized to perform this action");
-            }
         }
     }
 }
