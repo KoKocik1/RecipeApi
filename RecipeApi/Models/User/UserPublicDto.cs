@@ -3,11 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace RecipeApi.Database
+namespace RecipeApi.Models
 {
-    public class Units_ingredient
+    public class UserPublicDto
     {
         public int Id { get; set; }
-        public string Type { get; set; }
+        public string Username { get; set; }
+        public string AboutMe { get; set; }
     }
 }
