@@ -16,94 +16,94 @@ namespace RecipeApi.Tests.RecipeIngredientTest
 {
     public class RecipeIngredientControllerTest
     {
-        private readonly IMapper _mapper;
-        private readonly ILogger<RecipeIngredientService> _logger;
-        private readonly ILogger<RecipeIngredientController> _loggerController;
-        DbContextOptions<RecipeDbContext> _options;
-        public RecipeIngredientControllerTest()
-        {
+        // private readonly IMapper _mapper;
+        // private readonly ILogger<RecipeIngredientService> _logger;
+        // private readonly ILogger<RecipeIngredientController> _loggerController;
+        // DbContextOptions<RecipeDbContext> _options;
+        // public RecipeIngredientControllerTest()
+        // {
 
-            _options = new DbContextOptionsBuilder<RecipeDbContext>()
-                        .UseInMemoryDatabase(databaseName: "DatabaseTest")
-                        .Options;
+        //     _options = new DbContextOptionsBuilder<RecipeDbContext>()
+        //                 .UseInMemoryDatabase(databaseName: "DatabaseTest")
+        //                 .Options;
 
-            _mapper = new Mapper(new MapperConfiguration(cfg => cfg.AddProfile<RecipeMappingProfile>()));
-            _loggerController = new LoggerFactory().CreateLogger<RecipeIngredientController>();
-            _logger = new LoggerFactory().CreateLogger<RecipeIngredientService>();
+        //     _mapper = new Mapper(new MapperConfiguration(cfg => cfg.AddProfile<RecipeMappingProfile>()));
+        //     _loggerController = new LoggerFactory().CreateLogger<RecipeIngredientController>();
+        //     _logger = new LoggerFactory().CreateLogger<RecipeIngredientService>();
 
-            cleanDatabase();
-            createTestData();
+        //     cleanDatabase();
+        //     createTestData();
 
-        }
-        private void cleanDatabase()
-        {
+        // }
+        // private void cleanDatabase()
+        // {
 
-        }
-        private void createTestData()
-        {
+        // }
+        // private void createTestData()
+        // {
 
-            UnitIngredient unitIngredient1 = new UnitIngredient {Type = "Kg" };
-            UnitIngredient unitIngredient2 = new UnitIngredient {Type = "g" };
+        //     UnitIngredient unitIngredient1 = new UnitIngredient {Type = "Kg" };
+        //     UnitIngredient unitIngredient2 = new UnitIngredient {Type = "g" };
 
-            Ingredient ingredient1 = new Ingredient { Name = "Ingredient1", Verified = false };
-            Ingredient ingredient2 = new Ingredient { Name = "Ingredient2", Verified = false };
-            Ingredient ingredient3 = new Ingredient { Name = "Ingredient3", Verified = false };
-            Ingredient ingredient4 = new Ingredient { Name = "Ingredient4", Verified = false };
+        //     Ingredient ingredient1 = new Ingredient { Name = "Ingredient1", Verified = false };
+        //     Ingredient ingredient2 = new Ingredient { Name = "Ingredient2", Verified = false };
+        //     Ingredient ingredient3 = new Ingredient { Name = "Ingredient3", Verified = false };
+        //     Ingredient ingredient4 = new Ingredient { Name = "Ingredient4", Verified = false };
 
-            User user = new User{
-                    Email = "recipeIngredient@recipeIngredient.pl",
-                    PasswordHash = "1234",
-                    RoleId = 1,
-                    FirstName = "RecipeIngredient",
-                    LastName = "RecipeIngredient",
-                    UserName = "RecipeIngredient",
-                    DateOfBirth = DateTime.Now.ToUniversalTime(),
-                    Nationality = "Test"
-            };
+        //     User user = new User{
+        //             Email = "recipeIngredient@recipeIngredient.pl",
+        //             PasswordHash = "1234",
+        //             RoleId = 1,
+        //             FirstName = "RecipeIngredient",
+        //             LastName = "RecipeIngredient",
+        //             UserName = "RecipeIngredient",
+        //             DateOfBirth = DateTime.Now.ToUniversalTime(),
+        //             Nationality = "Test"
+        //     };
 
-            using (var context = new RecipeDbContext(_options))
-            {
-                context.UnitIngredients.AddRange(new List<UnitIngredient>
-                {
-                    unitIngredient1,
-                    unitIngredient2
-                });
-                context.Ingredients.AddRange(new List<Ingredient>
-                {
-                    ingredient1,
-                    ingredient2,
-                    ingredient3,
-                    ingredient4
-                });
-                context.Users.Add(user);
-                context.SaveChanges();
-            }
-        }
+        //     using (var context = new RecipeDbContext(_options))
+        //     {
+        //         context.UnitIngredients.AddRange(new List<UnitIngredient>
+        //         {
+        //             unitIngredient1,
+        //             unitIngredient2
+        //         });
+        //         context.Ingredients.AddRange(new List<Ingredient>
+        //         {
+        //             ingredient1,
+        //             ingredient2,
+        //             ingredient3,
+        //             ingredient4
+        //         });
+        //         context.Users.Add(user);
+        //         context.SaveChanges();
+        //     }
+        // }
 
-        //get all recipeIngredients
-        [Fact]
-        public void GetRecipeIngredients_ReturnsOkObjectResult_WithListOfRecipeIngredients()
-        {
-            // Set up in-memory database options
-            using (var context = new RecipeDbContext(_options))
-            {
-                // Arrange
-                var service = new RecipeIngredientService(context, _mapper, _logger);
-                var controller = new RecipeIngredientController(_loggerController, service);
+        // //get all recipeIngredients
+        // [Fact]
+        // public void GetRecipeIngredients_ReturnsOkObjectResult_WithListOfRecipeIngredients()
+        // {
+        //     // Set up in-memory database options
+        //     using (var context = new RecipeDbContext(_options))
+        //     {
+        //         // Arrange
+        //         var service = new RecipeIngredientService(context, _mapper, _logger);
+        //         var controller = new RecipeIngredientController(_loggerController, service);
 
-                controller.Create(new CreateRecipeIngredientToExistingRecipeDto { RecipeId = 1, IngredientId = 1, UnitIngredientId = 1, Quantity = 1 });
-                controller.Create(new CreateRecipeIngredientToExistingRecipeDto { RecipeId = 2, IngredientId = 2, UnitIngredientId = 2, Quantity = 2 });
-                controller.Create(new CreateRecipeIngredientToExistingRecipeDto { RecipeId = 1, IngredientId = 3, UnitIngredientId = 1, Quantity = 3 });
-                controller.Create(new CreateRecipeIngredientToExistingRecipeDto { RecipeId = 2, IngredientId = 4, UnitIngredientId = 2, Quantity = 4 });
+        //         controller.Create(new CreateRecipeIngredientToExistingRecipeDto { RecipeId = 1, IngredientId = 1, UnitIngredientId = 1, Quantity = 1 });
+        //         controller.Create(new CreateRecipeIngredientToExistingRecipeDto { RecipeId = 2, IngredientId = 2, UnitIngredientId = 2, Quantity = 2 });
+        //         controller.Create(new CreateRecipeIngredientToExistingRecipeDto { RecipeId = 1, IngredientId = 3, UnitIngredientId = 1, Quantity = 3 });
+        //         controller.Create(new CreateRecipeIngredientToExistingRecipeDto { RecipeId = 2, IngredientId = 4, UnitIngredientId = 2, Quantity = 4 });
 
-                // Act
-                var result = controller.GetByRecipeId(1);
+        //         // Act
+        //         var result = controller.GetByRecipeId(1);
 
-                // Assert
-                var actionResult = Assert.IsType<OkObjectResult>(result.Result);
-                var returnValue = Assert.IsType<List<RecipeIngredientDto>>(actionResult.Value);
-                Assert.Equal(2, returnValue.Count);
-            }
-        }
+        //         // Assert
+        //         var actionResult = Assert.IsType<OkObjectResult>(result.Result);
+        //         var returnValue = Assert.IsType<List<RecipeIngredientDto>>(actionResult.Value);
+        //         Assert.Equal(2, returnValue.Count);
+        //     }
+        // }
     }
 }

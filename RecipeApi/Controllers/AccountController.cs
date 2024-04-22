@@ -3,10 +3,14 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity.Data;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using RecipeApi.Authentication;
 using RecipeApi.IService;
 using RecipeApi.Models;
+using RecipeApi.Models.User;
 
 namespace RecipeApi.Controllers
 {
@@ -18,22 +22,45 @@ namespace RecipeApi.Controllers
         private readonly IAccountService _acconntService;
 
 
-        public AccountController(IAccountService accountService, ILogger<AccountController> logger)
+        public AccountController(
+            IAccountService accountService,
+            ILogger<AccountController> logger)
         {
             _acconntService = accountService;
             _logger = logger;
         }
         [HttpPost("register")]
-        public ActionResult RegisterAccount([FromBody] RegisterUserDto dto)
+        [AllowAnonymous]
+        public async Task<ActionResult> RegisterAccount([FromBody] RegisterUserDto dto)
         {
-            _acconntService.RegisterUser(dto);
+            await _acconntService.RegisterUserAsync(dto);
             return Ok();
         }
         [HttpPost]
-        public ActionResult Login([FromBody] LoginDto dto)
+        [AllowAnonymous]
+        public async Task<ActionResult> Login([FromBody] LoginDto dto)
         {
-            string token = _acconntService.GenerateJwt(dto);
-            return Ok(token);
+            TokenData result = await _acconntService.LoginUserAsync(dto);
+            return Ok(new
+            {
+                access_token = result.Token
+            });
+        }
+
+        [HttpGet("confirmEmail")]
+        [AllowAnonymous]
+        public async Task<ActionResult> ConfirmEmail([FromQuery] string userId, [FromQuery] string token)
+        {
+            var resutl=await _acconntService.ConfirmEmailAsync(userId, token);
+            return Ok(resutl);
+        }
+
+        [HttpPost("logOut")]
+        [Authorize]
+        public async Task<ActionResult> LogOut()
+        {
+            await _acconntService.SingOutAsync();
+            return Ok();
         }
     }
 }
