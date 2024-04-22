@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using RecipeApi.IService;
@@ -12,6 +13,7 @@ namespace RecipeApi.Controllers
 {
     [Route("api/recipe-unit")]
     [ApiController]
+    [Authorize(Roles = "Admin")]
     public class UnitIngredientController : ControllerBase
     {
         private readonly ILogger<UnitIngredientController> _logger;
@@ -24,6 +26,7 @@ namespace RecipeApi.Controllers
         }
 
         [HttpGet]
+        [AllowAnonymous]
         public ActionResult<IEnumerable<UnitIngredientDto>> Get()
         {
             var units = _unitIngredientService.GetUnits();
@@ -31,6 +34,7 @@ namespace RecipeApi.Controllers
         }
         
         [HttpGet("{id}")]
+        [AllowAnonymous]
         public ActionResult<UnitIngredientDto> Get(int id)
         {
             var unit = _unitIngredientService.GetUnit(id);

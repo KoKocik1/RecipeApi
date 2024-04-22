@@ -125,7 +125,8 @@ builder.Services.AddScoped<ITokenHelper, TokenHelper>();
 builder.Services.AddSingleton<IEmailService, EmailService>();
 
 builder.Services.AddScoped<IValidator<RegisterUserDto>, RegisterUserDtoValidator>();
-
+builder.Services.AddScoped<IValidator<UpdateRecipeIngredientDto>, UpdateRecipeIngredientDtoValidator>();
+builder.Services.AddScoped<IValidator<CreateRecipeIngredientToExistingRecipeDto>, CreateRecipeIngredientToExistingRecipeDtoValidator>();
 
 // builder.Services
 //     .AddIdentityApiEndpoints<User>()
