@@ -15,6 +15,7 @@ using RecipeApi.Validators;
 using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Authorization;
 using RecipeApi.Settings;
+using RecipeApi.Tools;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -33,16 +34,26 @@ builder.Services.AddAuthentication(option =>
     option.DefaultAuthenticateScheme = "Bearer";
     option.DefaultScheme = "Bearer";
     option.DefaultChallengeScheme = "Bearer";
+
 }).AddJwtBearer(cfg =>
 {
-    cfg.RequireHttpsMetadata = false;
-    cfg.SaveToken = true;
     cfg.TokenValidationParameters = new TokenValidationParameters
     {
-        ValidIssuer = authenticationSettings.JwtIssuer,
-        ValidAudience = authenticationSettings.JwtIssuer,
-        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(authenticationSettings.JwtKey)),
+        ValidateIssuerSigningKey = true,
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(authenticationSettings.JwtKey ?? string.Empty)),
+        ValidateLifetime = true,
+        ValidateAudience = false,
+        ValidateIssuer = false,
+        ClockSkew = TimeSpan.Zero,
     };
+    // cfg.RequireHttpsMetadata = false;
+    // cfg.SaveToken = true;
+    // cfg.TokenValidationParameters = new TokenValidationParameters
+    // {
+    //     ValidIssuer = authenticationSettings.JwtIssuer,
+    //     ValidAudience = authenticationSettings.JwtIssuer,
+    //     IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(authenticationSettings.JwtKey)),
+    // };
 });
 
 builder.Services.AddAuthorization(option =>
@@ -59,7 +70,7 @@ builder.Services.AddDbContext<RecipeDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"));
 });
 
-builder.Services.AddIdentity<IdentityUser, IdentityRole>(options=>{
+builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options=>{
     options.User.RequireUniqueEmail = true;
     options.User.AllowedUserNameCharacters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._@+";
     options.Password.RequireDigit = true;
@@ -82,9 +93,9 @@ builder.Services.ConfigureApplicationCookie(options =>
     options.LogoutPath = "/Account/Logout";
     options.Cookie.Name = "Identity.Cookie";
     options.SlidingExpiration = true;
-    options.ExpireTimeSpan = TimeSpan.FromMinutes(60);
+    options.ExpireTimeSpan = TimeSpan.FromMinutes(1);
 });
-
+builder.Services.AddScoped<ErrorHandlingMiddleware>();
 
 builder.Services.Configure<SmtpSetting>(builder.Configuration.GetSection("SMTP"));
 
@@ -98,7 +109,7 @@ builder.Services.AddControllers().AddFluentValidation();
 
 builder.Services.AddAuthorizationBuilder(); //TODO: new
 
-builder.Services.AddScoped<ErrorHandlingMiddleware>();
+
 
 // Seeder
 builder.Services.AddScoped<RecipeSeeder>();
@@ -110,6 +121,7 @@ builder.Services.AddScoped<IRecipeIngredientService, RecipeIngredientService>();
 builder.Services.AddScoped<IUnitIngredientService, UnitIngredientService>();
 builder.Services.AddScoped<IRecipeService, RecipeService>();
 
+builder.Services.AddScoped<ITokenHelper, TokenHelper>();
 builder.Services.AddSingleton<IEmailService, EmailService>();
 
 builder.Services.AddScoped<IValidator<RegisterUserDto>, RegisterUserDtoValidator>();

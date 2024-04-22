@@ -7,7 +7,7 @@ namespace RecipeApi.Models
 {
     public class RecipeAuthorDto
     {
-        public int Id { get; set; }
-        public string Username { get; set; }
+        public string Id { get; set; }
+        public string UserName { get; set; }
     }
 }

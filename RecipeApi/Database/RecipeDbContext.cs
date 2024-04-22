@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 
 namespace RecipeApi.Database
 {
-    public class RecipeDbContext : IdentityDbContext
+    public class RecipeDbContext : IdentityDbContext<ApplicationUser>
     {
         public RecipeDbContext(DbContextOptions<RecipeDbContext> options) : base(options)
         {
@@ -14,8 +14,6 @@ namespace RecipeApi.Database
         public DbSet<RecipeIngredient> RecipeIngredients { get; set; }
         public DbSet<RecipeInstruction> RecipeInstructions { get; set; }
         public DbSet<UnitIngredient> UnitIngredients { get; set; }
-        public DbSet<UserDetails> UsersDetails { get; set; }
-
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
