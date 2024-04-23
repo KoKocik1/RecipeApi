@@ -10,10 +10,6 @@ namespace RecipeApi.Authentication
 {
     public class SameAuthorRequirementHandler : AuthorizationHandler<SameAuthorRequirement, Recipe>
     {
-        public SameAuthorRequirementHandler()
-        {
-        }
-
         protected override Task HandleRequirementAsync(AuthorizationHandlerContext context,
         SameAuthorRequirement requirement,
         Recipe recipe)
@@ -29,10 +25,10 @@ namespace RecipeApi.Authentication
             }
 
             // Check if the user is an admin
-            if (context.User.HasClaim(ClaimTypes.Role, "Admin"))
-            {
-                context.Succeed(requirement);
-            }
+            // if (context.User.HasClaim(ClaimTypes.Role, "Admin"))
+            // {
+            //     context.Succeed(requirement);
+            // }
 
             return Task.CompletedTask;
         }

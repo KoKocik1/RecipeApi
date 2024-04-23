@@ -13,7 +13,7 @@ using RecipeApi.Models;
 
 namespace RecipeApi.Controllers
 {
-    [Route("recipes")]
+    [Route("Recipe")]
     [ApiController]
     public class RecipeController : ControllerBase
     {
@@ -59,7 +59,7 @@ namespace RecipeApi.Controllers
         [Authorize]
         public async Task<ActionResult> Create([FromBody] CreateRecipeDto recipe)
         {
-            var user= await _userManager.GetUserAsync(User);
+            var user = await _userManager.GetUserAsync(User);
             var id = _recipeService.AddRecipe(recipe, user.Id);
             return Created($"/recipes/{id}", null);
         }
@@ -68,7 +68,7 @@ namespace RecipeApi.Controllers
         [Authorize]
         public async Task<ActionResult> Update(int id, [FromBody] UpdateRecipeDto recipe)
         {
-            var user= await _userManager.GetUserAsync(User);
+            var user = await _userManager.GetUserAsync(User);
             _recipeService.UpdateRecipe(id, recipe, user.Id);
             return Ok();
         }
@@ -77,7 +77,7 @@ namespace RecipeApi.Controllers
         [Authorize]
         public async Task<ActionResult> Delete(int id)
         {
-            var user= await _userManager.GetUserAsync(User);
+            var user = await _userManager.GetUserAsync(User);
             _recipeService.DeleteRecipe(id, user.Id);
             return NoContent();
         }

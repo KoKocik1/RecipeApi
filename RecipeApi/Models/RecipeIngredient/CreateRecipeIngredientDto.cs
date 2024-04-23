@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace RecipeApi.Models
 {
-    public class CreateRecipeIngredientToNewRecipeDto
+    public class CreateRecipeIngredientDto
     {
         public int IngredientId { get; set; }
         public int UnitIngredientId { get; set; }

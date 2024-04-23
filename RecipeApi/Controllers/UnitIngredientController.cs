@@ -11,7 +11,7 @@ using RecipeApi.Models;
 
 namespace RecipeApi.Controllers
 {
-    [Route("api/recipe-unit")]
+    [Route("Units")]
     [ApiController]
     [Authorize(Roles = "Admin")]
     public class UnitIngredientController : ControllerBase

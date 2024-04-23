@@ -14,7 +14,7 @@ using RecipeApi.Models.User;
 
 namespace RecipeApi.Controllers
 {
-    [Route("api/account")]
+    [Route("Account")]
     [ApiController]
     public class AccountController : ControllerBase
     {
@@ -36,7 +36,7 @@ namespace RecipeApi.Controllers
             await _acconntService.RegisterUserAsync(dto);
             return Ok();
         }
-        [HttpPost]
+        [HttpPost("Login")]
         [AllowAnonymous]
         public async Task<ActionResult> Login([FromBody] LoginDto dto)
         {

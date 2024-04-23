@@ -36,14 +36,14 @@ namespace RecipeApi.Service
             _authorizationService = authorizationService;
             _userManager = userManager;
         }
+
         public int AddRecipe(CreateRecipeDto recipe, string userId)
         {
-
             if (recipe is null) throw new BadRequestException("Empty recipe data");
 
             var recipeEntity = _mapper.Map<Recipe>(recipe);
+            
             recipeEntity.UserId = userId;
-            recipeEntity.CreatedAt = DateTime.Now.ToUniversalTime();
             _dbContext.Recipes.Add(recipeEntity);
             _dbContext.SaveChanges();
 
@@ -57,13 +57,8 @@ namespace RecipeApi.Service
             if (recipe is null) throw new NotFoundException("Recipe not found");
 
             if(userId!=recipe.UserId) throw new ForbidException("You are not authorized to perform this action");
-
-            var recipeIngredients = _dbContext.RecipeIngredients.Where(ri => ri.RecipeId == id);
-            var recipeInstructions = _dbContext.RecipeInstructions.Where(ri => ri.RecipeId == recipe.Id);
             
             _dbContext.Recipes.Remove(recipe);
-            _dbContext.RecipeIngredients.RemoveRange(recipeIngredients);
-            _dbContext.RecipeInstructions.RemoveRange(recipeInstructions);
             _dbContext.SaveChanges();
         }
 
@@ -113,20 +108,18 @@ namespace RecipeApi.Service
 
             if (recipe is null) throw new BadRequestException("Invalid recipe");
 
-            var recipeEntity = _dbContext.Recipes.FirstOrDefault(r => r.Id == id);
+            var recipeEntity = _dbContext.Recipes
+                .Include(r => r.User)
+                .FirstOrDefault(r => r.Id == id);
+                
             if (recipeEntity is null) throw new NotFoundException("Recipe not found");
 
             if(userId!=recipeEntity.UserId) throw new ForbidException("You are not authorized to perform this action");
+
+            _dbContext.RecipeIngredients.RemoveRange(_dbContext.RecipeIngredients.Where(ri => ri.RecipeId == recipeEntity.Id));
+            _dbContext.RecipeInstructions.RemoveRange(_dbContext.RecipeInstructions.Where(ri => ri.RecipeId == recipeEntity.Id));
             
-
-            recipeEntity.Title = recipe.Title;
-            recipeEntity.Description = recipe.Description;
-            recipeEntity.Portions = recipe.Portions;
-            recipeEntity.TimeToCook = recipe.TimeToCook;
-            recipeEntity.UpdatedAt = DateTime.Now.ToUniversalTime();
-
-            // recipeEntity.Instructions = _mapper.Map<List<RecipeInstruction>>(recipe.Instructions);
-            // recipeEntity.Ingredients = _mapper.Map<List<RecipeIngredient>>(recipe.Ingredients);
+            _mapper.Map(recipe, recipeEntity);
 
             _dbContext.Recipes.Update(recipeEntity);
             _dbContext.SaveChanges();
