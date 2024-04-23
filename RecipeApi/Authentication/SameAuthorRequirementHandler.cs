@@ -18,13 +18,17 @@ namespace RecipeApi.Authentication
         SameAuthorRequirement requirement,
         Recipe recipe)
         {
+            // There have access admins and login users, so I need to check both
+            // If I add [Authorization(roles="admin, user")] I won't know if the user is an admin or not
             var userId = context.User.FindFirst(c => c.Type == ClaimTypes.NameIdentifier).Value;
 
-            if (recipe.UserId == int.Parse(userId))
+            // Check if the user is the author of the recipe
+            if (recipe.UserId == userId)
             {
                 context.Succeed(requirement);
             }
 
+            // Check if the user is an admin
             if (context.User.HasClaim(ClaimTypes.Role, "Admin"))
             {
                 context.Succeed(requirement);

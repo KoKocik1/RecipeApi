@@ -7,8 +7,8 @@ namespace RecipeApi.Models
 {
     public class UserPublicDto
     {
-        public int Id { get; set; }
-        public string Username { get; set; }
+        public string Id { get; set; }
+        public string UserName { get; set; }
         public string AboutMe { get; set; }
     }
 }

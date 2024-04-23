@@ -20,26 +20,27 @@ namespace RecipeApi.Middleware
             {
                 await next.Invoke(context);
             }
-            catch(ForbidException forbidException){
-                context.Response.StatusCode = 403;
-                await context.Response.WriteAsync(forbidException.Message);
-            }
             catch(NotFoundException notFoundException){
                 context.Response.StatusCode = 404;
                 await context.Response.WriteAsync(notFoundException.Message);
             }
-            catch (BadRequestException badRequestException)
-            {
+            catch(ForbidException forbidException){
+                context.Response.StatusCode = 403;
+                await context.Response.WriteAsync(forbidException.Message);
+            }
+            catch(BadRequestException badRequestException){
                 context.Response.StatusCode = 400;
                 await context.Response.WriteAsync(badRequestException.Message);
             }
-            catch (Exception e)
+             catch (Exception e)
             {
                 _logger.LogError(e, e.Message);
 
                 context.Response.StatusCode = 500;
-                await context.Response.WriteAsync("Something went wrong");
-            }
+               // await context.Response.WriteAsync("Something went wrong");
+                await context.Response.WriteAsync(e.Message);
+            }            
+           
         }
     }
 }
