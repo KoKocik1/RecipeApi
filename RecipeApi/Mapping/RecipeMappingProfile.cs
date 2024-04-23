@@ -24,7 +24,7 @@ namespace RecipeApi.Mapping
                 .ForMember(dest => dest.Verified, opt => opt.MapFrom(src => src.Ingredient.Verified))
                 .ForMember(dest => dest.Type, opt => opt.MapFrom(src => src.UnitIngredient.Type))
                 .ForMember(dest => dest.UnitIngredientId, opt => opt.MapFrom(src => src.UnitIngredient.Id));
-            
+
             CreateMap<RegisterUserDto, ApplicationUser>();
             CreateMap<ApplicationUser, RecipeAuthorDto>();
             CreateMap<ApplicationUser, UserPrivateDto>();
@@ -38,18 +38,40 @@ namespace RecipeApi.Mapping
             CreateMap<UpdateIngredientDto, Ingredient>();
 
             //recipe instructions
-            CreateMap<CreateRecipeInstructionToExistingRecipeDto, RecipeInstruction>();
-            CreateMap<CreateRecipeInstructionToNewRecipeDto, RecipeInstruction>();
+            CreateMap<CreateRecipeInstructionDto, RecipeInstruction>();
+
             CreateMap<UpdateRecipeInstructionDto, RecipeInstruction>();
 
             //recipe ingredients
-            CreateMap<CreateRecipeIngredientToExistingRecipeDto, RecipeIngredient>();
-            CreateMap<CreateRecipeIngredientToNewRecipeDto, RecipeIngredient>();
+            CreateMap<CreateRecipeIngredientDto, RecipeIngredient>();
             CreateMap<UpdateRecipeIngredientDto, RecipeIngredient>();
 
+            CreateMap<Recipe, Recipe>()
+                .ForMember(dest => dest.CreatedAt, opt => opt.MapFrom(src => DateTime.Now.ToUniversalTime()))
+                .ForMember(dest => dest.UpdatedAt, opt => opt.Ignore())
+                .ForMember(dest => dest.User, opt => opt.Ignore())
+                .ForMember(dest => dest.UserId, opt => opt.Ignore())
+                .ForMember(dest => dest.Id, opt => opt.Ignore())
+                .ForMember(dest => dest.Ingredients, opt => opt.MapFrom(src => src.Ingredients.Select(i => new RecipeIngredient
+                {
+                    IngredientId = i.IngredientId,
+                    Quantity = i.Quantity,
+                    UnitIngredientId = i.UnitIngredientId
+                })))
+                .ForMember(dest => dest.Instructions, opt => opt.MapFrom(src => src.Instructions.Select(ins => new RecipeInstruction
+                {
+                    Instruction = ins.Instruction,
+                    Order = ins.Order
+                })));
             //recipes
-            CreateMap<CreateRecipeDto, Recipe>();
-            CreateMap<UpdateRecipeDto, Recipe>();
+            CreateMap<UpdateRecipeDto, Recipe>()
+                .ForMember(dest => dest.UpdatedAt, opt => opt.MapFrom(src => DateTime.Now.ToUniversalTime()))
+                .ForMember(dest => dest.User, opt => opt.Ignore())
+                .ForMember(dest => dest.UserId, opt => opt.Ignore());
+            CreateMap<CreateRecipeDto, Recipe>()
+                .ForMember(dest => dest.CreatedAt, opt => opt.MapFrom(src => DateTime.Now.ToUniversalTime()))
+                .ForMember(dest => dest.Ingredients, opt => opt.MapFrom(src => src.Ingredients))
+                .ForMember(dest => dest.Instructions, opt => opt.MapFrom(src => src.Instructions));
 
         }
     }

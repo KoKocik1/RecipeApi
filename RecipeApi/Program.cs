@@ -16,6 +16,7 @@ using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Authorization;
 using RecipeApi.Settings;
 using RecipeApi.Tools;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -31,9 +32,9 @@ builder.Configuration.GetSection("Authentication").Bind(authenticationSettings);
 builder.Services.AddSingleton(authenticationSettings);
 builder.Services.AddAuthentication(option =>
 {
-    option.DefaultAuthenticateScheme = "Bearer";
-    option.DefaultScheme = "Bearer";
-    option.DefaultChallengeScheme = "Bearer";
+    option.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    option.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+    option.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
 
 }).AddJwtBearer(cfg =>
 {
@@ -89,8 +90,8 @@ builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options=>{
 builder.Services.ConfigureApplicationCookie(options =>
 {
     options.LoginPath = "/Account/Login";
-    options.AccessDeniedPath = "/Account/AccessDenied";
-    options.LogoutPath = "/Account/Logout";
+    //options.AccessDeniedPath = "/Account/AccessDenied";
+    //options.LogoutPath = "/Account/Logout";
     options.Cookie.Name = "Identity.Cookie";
     options.SlidingExpiration = true;
     options.ExpireTimeSpan = TimeSpan.FromMinutes(1);
@@ -116,8 +117,6 @@ builder.Services.AddScoped<RecipeSeeder>();
 
 builder.Services.AddScoped<IIngrededientService, IngredientService>();
 builder.Services.AddScoped<IAccountService, AccountService>();
-builder.Services.AddScoped<IRecipeInstructionService, RecipeInstructionService>();
-builder.Services.AddScoped<IRecipeIngredientService, RecipeIngredientService>();
 builder.Services.AddScoped<IUnitIngredientService, UnitIngredientService>();
 builder.Services.AddScoped<IRecipeService, RecipeService>();
 
@@ -126,7 +125,7 @@ builder.Services.AddSingleton<IEmailService, EmailService>();
 
 builder.Services.AddScoped<IValidator<RegisterUserDto>, RegisterUserDtoValidator>();
 builder.Services.AddScoped<IValidator<UpdateRecipeIngredientDto>, UpdateRecipeIngredientDtoValidator>();
-builder.Services.AddScoped<IValidator<CreateRecipeIngredientToExistingRecipeDto>, CreateRecipeIngredientToExistingRecipeDtoValidator>();
+builder.Services.AddScoped<IValidator<CreateRecipeIngredientDto>, CreateRecipeIngredientValidator>();
 
 // builder.Services
 //     .AddIdentityApiEndpoints<User>()

@@ -23,8 +23,6 @@ namespace RecipeApi.Validators
             RuleFor(x => x.IngredientId)
                 .NotEmpty().WithMessage("IngredientId is required");
 
-            RuleFor(x => x.RecipeId)
-                .NotEmpty().WithMessage("RecipeId is required");
         }
     }
 

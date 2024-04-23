@@ -8,9 +8,9 @@ using RecipeApi.Models;
 
 namespace RecipeApi.Validators
 {
-    public class CreateRecipeIngredientToExistingRecipeDtoValidator : AbstractValidator<CreateRecipeIngredientToExistingRecipeDto>
+    public class CreateRecipeIngredientValidator : AbstractValidator<CreateRecipeIngredientDto>
     {
-        public CreateRecipeIngredientToExistingRecipeDtoValidator(RecipeDbContext dbContext)
+        public CreateRecipeIngredientValidator(RecipeDbContext dbContext)
         {
 
             RuleFor(x => x.Quantity)
@@ -23,8 +23,6 @@ namespace RecipeApi.Validators
             RuleFor(x => x.IngredientId)
                 .NotEmpty().WithMessage("IngredientId is required");
 
-            RuleFor(x => x.RecipeId)
-                .NotEmpty().WithMessage("RecipeId is required");
         }
     }
 

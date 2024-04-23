@@ -12,7 +12,7 @@ using RecipeApi.Service;
 
 namespace RecipeApi.Controllers
 {
-    [Route("api/ingredient")]
+    [Route("Ingredient")]
     [ApiController]
     public class IngredientController : ControllerBase
     {

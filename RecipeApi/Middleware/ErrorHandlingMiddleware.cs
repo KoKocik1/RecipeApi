@@ -32,6 +32,10 @@ namespace RecipeApi.Middleware
                 context.Response.StatusCode = 400;
                 await context.Response.WriteAsync(badRequestException.Message);
             }
+            catch(UnauthorizedAccessException unauthorizedAccessException){
+                context.Response.StatusCode = 401;
+                await context.Response.WriteAsync(unauthorizedAccessException.Message);
+            }
              catch (Exception e)
             {
                 _logger.LogError(e, e.Message);
