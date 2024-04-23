@@ -15,7 +15,7 @@ namespace RecipeApi.Tests.DatabaseTest
         {
             // Database in memory without connect to real database
             var options = new DbContextOptionsBuilder<RecipeDbContext>()
-                .UseInMemoryDatabase(databaseName: "DatabaseTest")
+                .UseInMemoryDatabase(databaseName: "DbContext_CanCreateInstance")
                 .Options;
 
             // act

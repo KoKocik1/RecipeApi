@@ -68,20 +68,15 @@ namespace RecipeApi.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<DateTime?>("UpdatedAt")
+                    b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<int>("UserId")
-                        .HasColumnType("integer");
-
                     b.HasKey("Id");
-
-                    b.HasIndex("UserId");
 
                     b.ToTable("Recipes");
                 });
 
-            modelBuilder.Entity("RecipeApi.Database.RecipeIngredient", b =>
+            modelBuilder.Entity("RecipeApi.Database.Recipe_Ingredient", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -98,7 +93,7 @@ namespace RecipeApi.Migrations
                     b.Property<int>("RecipeId")
                         .HasColumnType("integer");
 
-                    b.Property<int>("UnitIngredientId")
+                    b.Property<int>("Units_ingredientId")
                         .HasColumnType("integer");
 
                     b.HasKey("Id");
@@ -107,12 +102,12 @@ namespace RecipeApi.Migrations
 
                     b.HasIndex("RecipeId");
 
-                    b.HasIndex("UnitIngredientId");
+                    b.HasIndex("Units_ingredientId");
 
-                    b.ToTable("RecipeIngredients");
+                    b.ToTable("Recipe_Ingredients");
                 });
 
-            modelBuilder.Entity("RecipeApi.Database.RecipeInstruction", b =>
+            modelBuilder.Entity("RecipeApi.Database.Recipe_Instruction", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -134,27 +129,10 @@ namespace RecipeApi.Migrations
 
                     b.HasIndex("RecipeId");
 
-                    b.ToTable("RecipeInstructions");
+                    b.ToTable("Recipe_Instructions");
                 });
 
-            modelBuilder.Entity("RecipeApi.Database.Role", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Roles");
-                });
-
-            modelBuilder.Entity("RecipeApi.Database.UnitIngredient", b =>
+            modelBuilder.Entity("RecipeApi.Database.Units_ingredient", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -168,69 +146,10 @@ namespace RecipeApi.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("UnitIngredients");
+                    b.ToTable("Units_ingredients");
                 });
 
-            modelBuilder.Entity("RecipeApi.Database.User", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("AboutMe")
-                        .HasColumnType("text");
-
-                    b.Property<DateTime?>("DateOfBirth")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("Email")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("FirstName")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("LastName")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("Nationality")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("PasswordHash")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<int>("RoleId")
-                        .HasColumnType("integer");
-
-                    b.Property<string>("UserName")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("RoleId");
-
-                    b.ToTable("Users");
-                });
-
-            modelBuilder.Entity("RecipeApi.Database.Recipe", b =>
-                {
-                    b.HasOne("RecipeApi.Database.User", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("User");
-                });
-
-            modelBuilder.Entity("RecipeApi.Database.RecipeIngredient", b =>
+            modelBuilder.Entity("RecipeApi.Database.Recipe_Ingredient", b =>
                 {
                     b.HasOne("RecipeApi.Database.Ingredient", "Ingredient")
                         .WithMany()
@@ -244,35 +163,24 @@ namespace RecipeApi.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("RecipeApi.Database.UnitIngredient", "UnitIngredient")
+                    b.HasOne("RecipeApi.Database.Units_ingredient", "Unit")
                         .WithMany()
-                        .HasForeignKey("UnitIngredientId")
+                        .HasForeignKey("Units_ingredientId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Ingredient");
 
-                    b.Navigation("UnitIngredient");
+                    b.Navigation("Unit");
                 });
 
-            modelBuilder.Entity("RecipeApi.Database.RecipeInstruction", b =>
+            modelBuilder.Entity("RecipeApi.Database.Recipe_Instruction", b =>
                 {
                     b.HasOne("RecipeApi.Database.Recipe", null)
                         .WithMany("Instructions")
                         .HasForeignKey("RecipeId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-                });
-
-            modelBuilder.Entity("RecipeApi.Database.User", b =>
-                {
-                    b.HasOne("RecipeApi.Database.Role", "Role")
-                        .WithMany()
-                        .HasForeignKey("RoleId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Role");
                 });
 
             modelBuilder.Entity("RecipeApi.Database.Recipe", b =>
