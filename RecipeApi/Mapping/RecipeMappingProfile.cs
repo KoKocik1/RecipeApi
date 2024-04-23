@@ -46,6 +46,23 @@ namespace RecipeApi.Mapping
             CreateMap<CreateRecipeIngredientDto, RecipeIngredient>();
             CreateMap<UpdateRecipeIngredientDto, RecipeIngredient>();
 
+            CreateMap<Recipe, Recipe>()
+                .ForMember(dest => dest.CreatedAt, opt => opt.MapFrom(src => DateTime.Now.ToUniversalTime()))
+                .ForMember(dest => dest.UpdatedAt, opt => opt.Ignore())
+                .ForMember(dest => dest.User, opt => opt.Ignore())
+                .ForMember(dest => dest.UserId, opt => opt.Ignore())
+                .ForMember(dest => dest.Id, opt => opt.Ignore())
+                .ForMember(dest => dest.Ingredients, opt => opt.MapFrom(src => src.Ingredients.Select(i => new RecipeIngredient
+                {
+                    IngredientId = i.IngredientId,
+                    Quantity = i.Quantity,
+                    UnitIngredientId = i.UnitIngredientId
+                })))
+                .ForMember(dest => dest.Instructions, opt => opt.MapFrom(src => src.Instructions.Select(ins => new RecipeInstruction
+                {
+                    Instruction = ins.Instruction,
+                    Order = ins.Order
+                })));
             //recipes
             CreateMap<UpdateRecipeDto, Recipe>()
                 .ForMember(dest => dest.UpdatedAt, opt => opt.MapFrom(src => DateTime.Now.ToUniversalTime()))

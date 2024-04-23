@@ -49,11 +49,27 @@ namespace RecipeApi.Service
 
             return recipeEntity.Id;
         }
-
-        public void DeleteRecipe(int id, string userId)
+        public int CloneRecipe(int recipeId, string userId)
         {
-            _logger.LogInformation($"Deleting recipe with id {id}");
-            var recipe = _dbContext.Recipes.FirstOrDefault(r => r.Id == id);
+            //var recipe = _dbContext.Recipes.FirstOrDefault(r => r.Id == recipeId);
+            var recipe = getRecipe(recipeId);
+
+            if (recipe is null) throw new NotFoundException("Recipe not found");
+
+            var cloneRecipe=_mapper.Map<Recipe>(recipe);
+
+            cloneRecipe.UserId = userId;
+
+            _dbContext.Recipes.Add(cloneRecipe);
+            _dbContext.SaveChanges();
+
+            return cloneRecipe.Id;
+        }
+
+        public void DeleteRecipe(int recipeId, string userId)
+        {
+            _logger.LogInformation($"Deleting recipe with id {recipeId}");
+            var recipe = _dbContext.Recipes.FirstOrDefault(r => r.Id == recipeId);
             if (recipe is null) throw new NotFoundException("Recipe not found");
 
             if(userId!=recipe.UserId) throw new ForbidException("You are not authorized to perform this action");
@@ -62,16 +78,9 @@ namespace RecipeApi.Service
             _dbContext.SaveChanges();
         }
 
-        public RecipeDetailsDto GetRecipe(int id)
+        public RecipeDetailsDto GetRecipe(int recipeId)
         {
-            var recipe = _dbContext.Recipes
-            .Include(r => r.Ingredients)
-                .ThenInclude(ri => ri.Ingredient)
-            .Include(r => r.Ingredients)
-                .ThenInclude(ri => ri.UnitIngredient)
-            .Include(r => r.Instructions)
-            .Include(r => r.User)
-            .FirstOrDefault(r => r.Id == id);
+            var recipe = getRecipe(recipeId);
 
             if (recipe is null) throw new NotFoundException("Recipe not found");
 
@@ -102,15 +111,15 @@ namespace RecipeApi.Service
             return _mapper.Map<IEnumerable<RecipeDto>>(recipes);
         }
 
-        public void UpdateRecipe(int id, UpdateRecipeDto recipe, string userId)
+        public void UpdateRecipe(int recipeId, UpdateRecipeDto recipe, string userId)
         {
-            _logger.LogInformation($"Updating recipe with id {id}");
+            _logger.LogInformation($"Updating recipe with id {recipeId}");
 
             if (recipe is null) throw new BadRequestException("Invalid recipe");
 
             var recipeEntity = _dbContext.Recipes
                 .Include(r => r.User)
-                .FirstOrDefault(r => r.Id == id);
+                .FirstOrDefault(r => r.Id == recipeId);
                 
             if (recipeEntity is null) throw new NotFoundException("Recipe not found");
 
@@ -123,6 +132,17 @@ namespace RecipeApi.Service
 
             _dbContext.Recipes.Update(recipeEntity);
             _dbContext.SaveChanges();
+        }
+
+        private Recipe getRecipe(int recipeId){
+            return _dbContext.Recipes
+            .Include(r => r.Ingredients)
+                .ThenInclude(ri => ri.Ingredient)
+            .Include(r => r.Ingredients)
+                .ThenInclude(ri => ri.UnitIngredient)
+            .Include(r => r.Instructions)
+            .Include(r => r.User)
+            .FirstOrDefault(r => r.Id == recipeId);
         }
     }
 }

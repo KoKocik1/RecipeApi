@@ -39,11 +39,11 @@ namespace RecipeApi.Controllers
             return Ok(recipes);
         }
 
-        [HttpGet("{id}")]
+        [HttpGet("{recipeId}")]
         [AllowAnonymous]
-        public ActionResult<RecipeDetailsDto> GetRecipe(int id)
+        public ActionResult<RecipeDetailsDto> GetRecipe(int recipeId)
         {
-            var recipe = _recipeService.GetRecipe(id);
+            var recipe = _recipeService.GetRecipe(recipeId);
             return Ok(recipe);
         }
 
@@ -60,25 +60,34 @@ namespace RecipeApi.Controllers
         public async Task<ActionResult> Create([FromBody] CreateRecipeDto recipe)
         {
             var user = await _userManager.GetUserAsync(User);
-            var id = _recipeService.AddRecipe(recipe, user.Id);
-            return Created($"/recipes/{id}", null);
+            var recipeId = _recipeService.AddRecipe(recipe, user.Id);
+            return Created($"/recipes/{recipeId}", null);
         }
 
-        [HttpPut("{id}")]
+        [HttpPost("Clone/{recipeId}")]
         [Authorize]
-        public async Task<ActionResult> Update(int id, [FromBody] UpdateRecipeDto recipe)
+        public async Task<ActionResult> Clone(int recipeId)
         {
             var user = await _userManager.GetUserAsync(User);
-            _recipeService.UpdateRecipe(id, recipe, user.Id);
+            var newRecipeId = _recipeService.CloneRecipe(recipeId, user.Id);
+            return Created($"/Recipe/{newRecipeId}", null);
+        }
+
+        [HttpPut("{recipeId}")]
+        [Authorize]
+        public async Task<ActionResult> Update(int recipeId, [FromBody] UpdateRecipeDto recipe)
+        {
+            var user = await _userManager.GetUserAsync(User);
+            _recipeService.UpdateRecipe(recipeId, recipe, user.Id);
             return Ok();
         }
 
-        [HttpDelete("{id}")]
+        [HttpDelete("{recipeId}")]
         [Authorize]
-        public async Task<ActionResult> Delete(int id)
+        public async Task<ActionResult> Delete(int recipeId)
         {
             var user = await _userManager.GetUserAsync(User);
-            _recipeService.DeleteRecipe(id, user.Id);
+            _recipeService.DeleteRecipe(recipeId, user.Id);
             return NoContent();
         }
     }
