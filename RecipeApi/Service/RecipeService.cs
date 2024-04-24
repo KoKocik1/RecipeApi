@@ -51,7 +51,6 @@ namespace RecipeApi.Service
         }
         public int CloneRecipe(int recipeId, string userId)
         {
-            //var recipe = _dbContext.Recipes.FirstOrDefault(r => r.Id == recipeId);
             var recipe = getRecipe(recipeId);
 
             if (recipe is null) throw new NotFoundException("Recipe not found");
@@ -68,7 +67,8 @@ namespace RecipeApi.Service
 
         public void DeleteRecipe(int recipeId, string userId)
         {
-            _logger.LogInformation($"Deleting recipe with id {recipeId}");
+            _logger.LogInformation($"Deleting recipe with id {recipeId} by user {userId}");
+
             var recipe = _dbContext.Recipes.FirstOrDefault(r => r.Id == recipeId);
             if (recipe is null) throw new NotFoundException("Recipe not found");
 
@@ -113,7 +113,7 @@ namespace RecipeApi.Service
 
         public void UpdateRecipe(int recipeId, UpdateRecipeDto recipe, string userId)
         {
-            _logger.LogInformation($"Updating recipe with id {recipeId}");
+            _logger.LogInformation($"Updating recipe with id {recipeId} by user {userId}");
 
             if (recipe is null) throw new BadRequestException("Invalid recipe");
 
