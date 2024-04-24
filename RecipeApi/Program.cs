@@ -17,13 +17,16 @@ using Microsoft.AspNetCore.Authorization;
 using RecipeApi.Settings;
 using RecipeApi.Tools;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Serilog;
+using Serilog.Events;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Nlog
-builder.Logging.ClearProviders();
-builder.Logging.SetMinimumLevel(Microsoft.Extensions.Logging.LogLevel.Trace);
-//builder.Host.UseNLog();
+builder.Host.UseSerilog(
+        (context, configuration) => 
+        configuration.ReadFrom.Configuration(context.Configuration)
+    );
 
 // authentication
 var authenticationSettings = new AuthenticationSettings();
@@ -71,7 +74,8 @@ builder.Services.AddDbContext<RecipeDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"));
 });
 
-builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options=>{
+builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
+{
     options.User.RequireUniqueEmail = true;
     options.User.AllowedUserNameCharacters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._@+";
     options.Password.RequireDigit = true;
@@ -155,6 +159,7 @@ var app = builder.Build();
 var scope = app.Services.CreateScope();
 var seeder = scope.ServiceProvider.GetRequiredService<RecipeSeeder>();
 
+app.UseSerilogRequestLogging();
 
 app.UseResponseCaching();
 app.UseStaticFiles();
