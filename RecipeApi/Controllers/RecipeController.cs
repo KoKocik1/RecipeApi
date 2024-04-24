@@ -33,9 +33,9 @@ namespace RecipeApi.Controllers
 
         [HttpGet]
         [AllowAnonymous]
-        public ActionResult<IEnumerable<RecipeDto>> GetRecipes()
+        public ActionResult<IEnumerable<RecipeDto>> GetRecipes([FromQuery]RecipeQuery query)
         {
-            var recipes = _recipeService.GetRecipes();
+            var recipes = _recipeService.GetRecipes(query);
             return Ok(recipes);
         }
 
