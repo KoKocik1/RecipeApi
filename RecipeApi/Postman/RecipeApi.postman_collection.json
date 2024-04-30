@@ -1,0 +1,561 @@
+{
+	"info": {
+		"_postman_id": "6f25b6c4-c21b-4e74-af0f-a29db3ff3705",
+		"name": "RecipeApi",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "14812811"
+	},
+	"item": [
+		{
+			"name": "Auth",
+			"item": [
+				{
+					"name": "Register google",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"firstName\": \"Imie\",\n  \"lastName\": \"Nazwisko\",\n  \"userName\": \"Admin1\",\n  \"email\": \"krzysiukokot1234567890@gmail.com\",\n  \"dateOfBirth\": \"2024-04-15T09:41:51.713Z\",\n  \"nationality\": \"Pl\",\n  \"password\": \"ZAQ!2wsx\",\n  \"confirmedPassword\": \"ZAQ!2wsx\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:5284/api/account/register",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5284",
+							"path": [
+								"api",
+								"account",
+								"register"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Register interia",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"firstName\": \"Imie\",\n  \"lastName\": \"Nazwisko\",\n  \"userName\": \"Admin2\",\n  \"email\": \"krzysiukokot@interia.pl\",\n  \"dateOfBirth\": \"2024-04-15T09:41:51.713Z\",\n  \"nationality\": \"Pl\",\n  \"password\": \"ZAQ!2wsx\",\n  \"confirmedPassword\": \"ZAQ!2wsx\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:5284/api/account/register",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5284",
+							"path": [
+								"api",
+								"account",
+								"register"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Login google",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"email\": \"krzysiukokot1234567890@gmail.com\",\n  \"password\": \"ZAQ!2wsx\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:5284/Account/Login",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5284",
+							"path": [
+								"Account",
+								"Login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Login interia",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"email\": \"krzysiukokot@interia.pl\",\n  \"password\": \"ZAQ!2wsx\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:5284/Account/Login",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5284",
+							"path": [
+								"Account",
+								"Login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "SingOut",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:5284/Account/logOut",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5284",
+							"path": [
+								"Account",
+								"logOut"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Ingredients",
+			"item": [
+				{
+					"name": "GetIngredients",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:5284/api/ingredient",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5284",
+							"path": [
+								"api",
+								"ingredient"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "DeleteIngredient",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:5284/api/ingredient/7",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5284",
+							"path": [
+								"api",
+								"ingredient",
+								"7"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetOneIngredient",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:5284/api/ingredient/3",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5284",
+							"path": [
+								"api",
+								"ingredient",
+								"3"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "New Request",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"Salad\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:5284/api/ingredient",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5284",
+							"path": [
+								"api",
+								"ingredient"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Units",
+			"item": [
+				{
+					"name": "Get all",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:5284/Units",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5284",
+							"path": [
+								"Units"
+							]
+						},
+						"description": "This is a GET request and it is used to \"get\" data from an endpoint. There is no request body for a GET request, but you can use query parameters to help specify the resource you want data on (e.g., in this request, we have `id=1`).\n\nA successful GET response will have a `200 OK` status, and should include some kind of response body - for example, HTML web content or JSON data."
+					},
+					"response": []
+				},
+				{
+					"name": "Get one",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:5284/Units/3",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5284",
+							"path": [
+								"Units",
+								"3"
+							]
+						},
+						"description": "This is a GET request and it is used to \"get\" data from an endpoint. There is no request body for a GET request, but you can use query parameters to help specify the resource you want data on (e.g., in this request, we have `id=1`).\n\nA successful GET response will have a `200 OK` status, and should include some kind of response body - for example, HTML web content or JSON data."
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Recipe",
+			"item": [
+				{
+					"name": "Get data",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:5284/Recipe?PageNumber=1&PageSize=6",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5284",
+							"path": [
+								"Recipe"
+							],
+							"query": [
+								{
+									"key": "PageNumber",
+									"value": "1"
+								},
+								{
+									"key": "PageSize",
+									"value": "6"
+								},
+								{
+									"key": "SearchPhase",
+									"value": "",
+									"disabled": true
+								},
+								{
+									"key": "SortBy",
+									"value": "Title",
+									"disabled": true
+								},
+								{
+									"key": "SortDirection",
+									"value": "0",
+									"disabled": true
+								}
+							]
+						},
+						"description": "This is a GET request and it is used to \"get\" data from an endpoint. There is no request body for a GET request, but you can use query parameters to help specify the resource you want data on (e.g., in this request, we have `id=1`).\n\nA successful GET response will have a `200 OK` status, and should include some kind of response body - for example, HTML web content or JSON data."
+					},
+					"response": []
+				},
+				{
+					"name": "Post data",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"title\": \"allTest\",\n  \"description\": \"string\",\n  \"timeToCook\": \"string\",\n  \"portions\": 1,\n  \"instructions\": [\n    {\n      \"instruction\": \"instr1\",\n      \"order\": 0\n    },\n     {\n      \"instruction\": \"instr3\",\n      \"order\": 3\n    },\n     {\n      \"instruction\": \"instr2\",\n      \"order\": 2\n    }\n  ],\n  \"ingredients\": [\n    {\n      \"ingredientId\": 1,\n      \"unitIngredientId\": 1,\n      \"quantity\": 1\n    },\n    {\n      \"ingredientId\": 2,\n      \"unitIngredientId\": 2,\n      \"quantity\": 2\n    },\n    {\n      \"ingredientId\": 3,\n      \"unitIngredientId\": 3,\n      \"quantity\": 3\n    }\n  ]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:5284/Recipe",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5284",
+							"path": [
+								"Recipe"
+							]
+						},
+						"description": "This is a POST request, submitting data to an API via the request body. This request submits JSON data, and the data is reflected in the response.\n\nA successful POST request typically returns a `200 OK` or `201 Created` response code."
+					},
+					"response": []
+				},
+				{
+					"name": "Update",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Successful PUT request\", function () {",
+									"    pm.expect(pm.response.code).to.be.oneOf([200, 201, 204]);",
+									"});",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"title\": \"allTest\",\n  \"description\": \"string\",\n  \"timeToCook\": \"string\",\n  \"portions\": 1,\n  \"instructions\": [\n    {\n      \"instruction\": \"instr1\",\n      \"order\": 3\n    },\n     {\n      \"instruction\": \"instr3\",\n      \"order\": 1\n    },\n     {\n      \"instruction\": \"instr2\",\n      \"order\": 2\n    }\n  ],\n  \"ingredients\": [\n    {\n      \"ingredientId\": 1,\n      \"unitIngredientId\": 1,\n      \"quantity\": 1\n    },\n    {\n      \"ingredientId\": 2,\n      \"unitIngredientId\": 2,\n      \"quantity\": 2\n    }\n  ]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:5284/Recipe/33",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5284",
+							"path": [
+								"Recipe",
+								"33"
+							]
+						},
+						"description": "This is a PUT request and it is used to overwrite an existing piece of data. For instance, after you create an entity with a POST request, you may want to modify that later. You can do that using a PUT request. You typically identify the entity being updated by including an identifier in the URL (eg. `id=1`).\n\nA successful PUT request typically returns a `200 OK`, `201 Created`, or `204 No Content` response code."
+					},
+					"response": []
+				},
+				{
+					"name": "Delete data",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Successful DELETE request\", function () {",
+									"    pm.expect(pm.response.code).to.be.oneOf([200, 202, 204]);",
+									"});",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:5284/Recipe/323",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5284",
+							"path": [
+								"Recipe",
+								"323"
+							]
+						},
+						"description": "This is a DELETE request, and it is used to delete data that was previously created via a POST request. You typically identify the entity being updated by including an identifier in the URL (eg. `id=1`).\n\nA successful DELETE request typically returns a `200 OK`, `202 Accepted`, or `204 No Content` response code."
+					},
+					"response": []
+				},
+				{
+					"name": "Clone Recipe",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"title\": \"allTest\",\n  \"description\": \"string\",\n  \"timeToCook\": \"string\",\n  \"portions\": 1,\n  \"instructions\": [\n    {\n      \"instruction\": \"instr1\",\n      \"order\": 0\n    },\n     {\n      \"instruction\": \"instr3\",\n      \"order\": 3\n    },\n     {\n      \"instruction\": \"instr2\",\n      \"order\": 2\n    }\n  ],\n  \"ingredients\": [\n    {\n      \"ingredientId\": 1,\n      \"unitIngredientId\": 1,\n      \"quantity\": 1\n    },\n    {\n      \"ingredientId\": 2,\n      \"unitIngredientId\": 2,\n      \"quantity\": 2\n    },\n    {\n      \"ingredientId\": 3,\n      \"unitIngredientId\": 3,\n      \"quantity\": 3\n    }\n  ]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:5284/Recipe/Clone/35",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5284",
+							"path": [
+								"Recipe",
+								"Clone",
+								"35"
+							]
+						},
+						"description": "This is a POST request, submitting data to an API via the request body. This request submits JSON data, and the data is reflected in the response.\n\nA successful POST request typically returns a `200 OK` or `201 Created` response code."
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}
